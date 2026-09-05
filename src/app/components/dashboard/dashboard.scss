@@ -1,0 +1,121 @@
+:host {
+  --ink: #1B1F27;
+  --slate: #232A35;
+  --paper: #F5F3EF;
+  --accent: #6B2737;
+  --gray: #8A8F98;
+  --border: rgba(27, 31, 39, 0.1);
+  --font-serif: 'Source Serif Pro', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+.dashboard-container {
+  font-family: var(--font-sans);
+  color: var(--ink);
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--gray);
+    margin: 0;
+  }
+}
+
+.btn-refresh {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover { background: #5A1F2E; }
+}
+
+.loading-state {
+  color: var(--gray);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.kpi-row {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+
+.kpi {
+  flex: 1;
+  padding: 24px 28px;
+  border-right: 1px solid var(--border);
+  background: white;
+  &:last-child { border-right: none; }
+
+  .kpi-value {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 34px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .kpi-label {
+    font-size: 13px;
+    color: var(--gray);
+  }
+}
+
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.chart-panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px;
+}
+
+.chart-header {
+  margin-bottom: 16px;
+
+  h2 {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+
+  p {
+    font-size: 12px;
+    color: var(--gray);
+    margin: 0;
+  }
+}
+
+.chart-canvas-wrap {
+  position: relative;
+  height: 260px;
+}
+
+@media (max-width: 900px) {
+  .charts-row { grid-template-columns: 1fr; }
+}

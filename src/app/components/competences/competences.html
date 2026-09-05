@@ -1,0 +1,33 @@
+<div class="competences-container">
+  <div class="header">
+    <h2>Compétences</h2>
+    <span class="badge" *ngIf="!isLoading()">{{ competences().length }} au total</span>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des compétences...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="error-banner">
+      <span class="icon">⚠️</span>
+      <p>{{ errorMessage() }}</p>
+      <button (click)="loadCompetences()" class="btn-retry">Réessayer</button>
+    </div>
+  } @else {
+    @if (competences().length > 0) {
+      <div class="competences-grid">
+        @for (c of competences(); track c.id) {
+          <div class="competence-card">
+            <span class="competence-name">{{ c.libelle }}</span>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <p>Aucune compétence trouvée.</p>
+      </div>
+    }
+  }
+</div>

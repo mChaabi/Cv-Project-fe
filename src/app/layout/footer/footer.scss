@@ -1,0 +1,112 @@
+$bg-footer: #ffffff;
+$border-color: #e0f2fe;
+$text-primary: #0f172a;
+$text-muted: #64748b;
+$primary-blue: #0284c7;
+$success-green: #10b981;
+
+.footer-container {
+  background: $bg-footer;
+  border-top: 1px solid $border-color;
+  padding: 1rem 1.5rem;
+  width: 100%;
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .copyright {
+      margin: 0;
+      font-size: 0.85rem;
+      color: $text-muted;
+
+      .brand {
+        font-weight: 600;
+        color: $text-primary;
+      }
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.85rem;
+
+      .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: $text-muted;
+        font-weight: 500;
+
+        .dot {
+          width: 8px;
+          height: 8px;
+          background-color: $success-green;
+          border-radius: 50%;
+          display: inline-block;
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+      }
+
+      a {
+        color: $text-muted;
+        text-decoration: none;
+        transition: color 0.2s;
+
+        &:hover {
+          color: $primary-blue;
+        }
+      }
+    }
+  }
+}
+
+/* Responsive pour mobiles */
+@media (max-width: 768px) {
+  .footer-container .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.footer-container {
+  border-top: 1px solid rgba(27, 31, 39, 0.1);
+  padding: 16px 40px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 12px;
+  color: #8A8F98;
+  background: white;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 16px;
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3F6B4F;
+  }
+}
+
+.footer-links a {
+  color: #8A8F98;
+  text-decoration: none;
+  margin-left: 16px;
+  &:hover { color: #6B2737; }
+}

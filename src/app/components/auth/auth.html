@@ -1,0 +1,65 @@
+<div class="auth-container">
+  <div class="auth-card">
+    
+    <!-- En-tête dynamique -->
+    <div class="auth-header">
+      <h2>{{ isLoginMode() ? 'Connexion' : 'Inscription' }}</h2>
+      <p>{{ isLoginMode() ? 'Accédez à votre espace de gestion RH' : 'Créez votre compte sur CV-Employee' }}</p>
+    </div>
+
+    <!-- Messages d'erreur ou de succès -->
+    @if (errorMessage()) {
+      <div class="alert error">{{ errorMessage() }}</div>
+    }
+    @if (successMessage()) {
+      <div class="alert success">{{ successMessage() }}</div>
+    }
+
+    <!-- Formulaire -->
+    <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Champ Username (Uniquement en mode Inscription) -->
+      @if (!isLoginMode()) {
+        <div class="form-group">
+          <label>Nom d'utilisateur</label>
+          <input type="text" formControlName="username" placeholder="Ex: mchaabi" />
+        </div>
+      }
+
+      <div class="form-group">
+        <label>Adresse Email</label>
+        <input type="email" formControlName="email" placeholder="nom@entreprise.com" />
+      </div>
+
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" formControlName="password" placeholder="••••••••" />
+      </div>
+
+      <!-- Champ Role (Uniquement en mode Inscription) -->
+      @if (!isLoginMode()) {
+        <div class="form-group">
+          <label>Rôle</label>
+          <select formControlName="role">
+            <option value="RH">RH</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </div>
+      }
+
+      <button type="submit" class="btn-submit" [disabled]="authForm.invalid || isLoading()">
+        {{ isLoading() ? 'Chargement...' : (isLoginMode() ? 'Se connecter' : "S'inscrire") }}
+      </button>
+    </form>
+
+    <!-- Basculeur de mode -->
+    <div class="auth-footer">
+      @if (isLoginMode()) {
+        <p>Pas encore de compte ? <a href="#" (click)="$event.preventDefault(); toggleMode(false)">S'inscrire</a></p>
+      } @else {
+        <p>Déjà un compte ? <a href="#" (click)="$event.preventDefault(); toggleMode(true)">Se connecter</a></p>
+      }
+    </div>
+
+  </div>
+</div>

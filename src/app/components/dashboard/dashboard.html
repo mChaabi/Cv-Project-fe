@@ -1,0 +1,52 @@
+<div class="dashboard-container">
+  <header class="page-header">
+    <div>
+      <h1>Tableau de bord RH</h1>
+      <p class="subtitle">Statistiques calculées depuis la base de données</p>
+    </div>
+    <button class="btn-refresh" (click)="loadAllData()">Actualiser</button>
+  </header>
+
+  <div *ngIf="isLoading()" class="loading-state">Chargement des données...</div>
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <span class="kpi-value">{{ totalCandidats() }}</span>
+      <span class="kpi-label">Candidats</span>
+    </div>
+    <div class="kpi">
+      <span class="kpi-value">{{ totalCandidatures() }}</span>
+      <span class="kpi-label">Candidatures</span>
+    </div>
+    <div class="kpi">
+      <span class="kpi-value">{{ totalExperiences() }}</span>
+      <span class="kpi-label">Expériences</span>
+    </div>
+    <div class="kpi">
+      <span class="kpi-value">{{ totalFormations() }}</span>
+      <span class="kpi-label">Formations</span>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-panel">
+      <div class="chart-header">
+        <h2>Répartition des compétences</h2>
+        <p>Calculé selon les compétences enregistrées</p>
+      </div>
+      <div class="chart-canvas-wrap">
+        <canvas #competenceCanvas></canvas>
+      </div>
+    </div>
+
+    <div class="chart-panel">
+      <div class="chart-header">
+        <h2>Expériences &amp; formations</h2>
+        <p>Volume total enregistré</p>
+      </div>
+      <div class="chart-canvas-wrap">
+        <canvas #experienceCanvas></canvas>
+      </div>
+    </div>
+  </div>
+</div>

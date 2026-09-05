@@ -1,0 +1,165 @@
+// layout.scss — tokens du design
+:host {
+  --ink: #1B1F27;
+  --slate: #232A35;
+  --paper: #F5F3EF;
+  --accent: #6B2737;
+  --gray: #8A8F98;
+  --border: rgba(27, 31, 39, 0.1);
+
+  --font-serif: 'Source Serif Pro', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--paper);
+  font-family: var(--font-sans);
+  color: var(--ink);
+}
+
+.sidebar {
+  width: 260px;
+  background: var(--slate);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 20px;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    letter-spacing: 0.02em;
+  }
+
+  .brand-name {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .brand-tagline {
+    display: block;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+  }
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .nav-section {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin: 20px 0 8px;
+    letter-spacing: 0.03em;
+  }
+
+  .nav-item {
+    padding: 9px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover { background: rgba(255,255,255,0.06); }
+
+    &.active {
+      background: var(--accent);
+      color: white;
+    }
+  }
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.8);
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+
+  &:hover { border-color: var(--accent); color: white; }
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--border);
+  background: white;
+
+  .search-input {
+    width: 360px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-size: 13px;
+    background: var(--paper);
+  }
+
+  .user-name { font-size: 13px; font-weight: 600; }
+  .user-role { font-size: 12px; color: var(--gray); margin-left: 6px; }
+}
+
+.page-content {
+  padding: 40px;
+}
+
+:host {
+  --ink: #1B1F27;
+  --slate: #232A35;
+  --paper: #F5F3EF;
+  --accent: #6B2737;
+  --gray: #8A8F98;
+  --border: rgba(27, 31, 39, 0.1);
+  --font-serif: 'Source Serif Pro', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 260px; // largeur de la sidebar, fixe en position
+}
+
+.page-content {
+  flex: 1;
+  padding: 40px;
+  font-family: var(--font-sans);
+  color: var(--ink);
+}

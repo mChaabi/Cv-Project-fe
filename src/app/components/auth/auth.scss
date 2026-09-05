@@ -1,0 +1,187 @@
+/* Variables de design system (modernes et épurées) */
+$primary-blue: #0284c7;
+$primary-hover: #0369a1;
+$bg-main: #f8fafc;
+$bg-card: #ffffff;
+$border-color: #e2e8f0;
+$border-focus: #0284c7;
+$text-primary: #0f172a;
+$text-muted: #64748b;
+$error-bg: #fee2e2;
+$error-text: #b91c1c;
+$success-bg: #dcfce7;
+$success-text: #15803d;
+
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 1.5rem;
+
+  .auth-card {
+    background: $bg-card;
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid $border-color;
+    box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.1), 
+                0 8px 10px -6px rgba(14, 165, 233, 0.1);
+    width: 100%;
+    max-width: 440px;
+    box-sizing: border-box;
+    animation: fadeIn 0.4s ease-in-out;
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+
+      h2 {
+        margin: 0;
+        color: $text-primary;
+        font-size: 1.75rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+      }
+
+      p {
+        margin: 0.5rem 0 0;
+        color: $text-muted;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Alertes et notifications (Erreur / Succès) */
+    .alert {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      text-align: center;
+      font-weight: 500;
+
+      &.error {
+        background: $error-bg;
+        color: $error-text;
+        border: 1px solid #fecaca;
+      }
+
+      &.success {
+        background: $success-bg;
+        color: $success-text;
+        border: 1px solid #bbf7d0;
+      }
+    }
+
+    /* Groupes de formulaires */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+
+      label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      input, select {
+        padding: 0.75rem 1rem;
+        border: 1px solid $border-color;
+        border-radius: 10px;
+        outline: none;
+        font-size: 0.95rem;
+        color: $text-primary;
+        background: #ffffff;
+        transition: all 0.2s ease;
+
+        &::placeholder {
+          color: #94a3b8;
+        }
+
+        &:focus {
+          border-color: $border-focus;
+          box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+        }
+      }
+
+      select {
+        cursor: pointer;
+      }
+    }
+
+    /* Bouton principal de soumission */
+    .btn-submit {
+      width: 100%;
+      background: $primary-blue;
+      color: white;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2);
+
+      &:hover {
+        background: $primary-hover;
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+
+    /* Pied de carte / Bascule de mode */
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: $text-muted;
+
+      a {
+        color: $primary-blue;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+
+        &:hover {
+          color: $primary-hover;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+/* Animation douce à l'apparition de la carte */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive pour les petits écrans (mobiles) */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 1rem;
+    
+    .auth-card {
+      padding: 1.5rem;
+    }
+  }
+}

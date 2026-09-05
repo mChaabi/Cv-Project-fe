@@ -1,0 +1,173 @@
+<div class="cvs-container">
+  <!-- Actions Header -->
+  <div class="action-bar">
+    <h2>Gestion des CVs</h2>
+    <button class="btn-primary" (click)="openModal()">
+      + Nouveau CV
+    </button>
+  </div>
+
+  <!-- List Grid -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des CVs...</p>
+    </div>
+  } @else {
+    @if (cvs().length > 0) {
+      <div class="cvs-grid">
+        @for (cv of cvs(); track cv.id) {
+          <div class="cv-card">
+            <div class="card-header">
+              <span class="candidat-name">👤 {{ cv.candidat?.nom }} {{ cv.candidat?.prenom }}</span>
+              <button class="btn-icon" (click)="deleteCv(cv.id)" title="Supprimer">🗑️</button>
+            </div>
+
+            <h3 class="cv-title">{{ cv.titre }}</h3>
+
+            <!-- Tags Compétences -->
+            @if (cv.competences && cv.competences.length > 0) {
+              <div class="competences-list">
+                @for (comp of cv.competences; track comp.id) {
+                  <span class="skill-chip">{{ comp.libelle }}</span>
+                }
+              </div>
+            }
+
+            <div class="details-section">
+              <small>💼 {{ cv.experiences?.length || 0 }} expériences</small>
+              <small>🎓 {{ cv.formations?.length || 0 }} formations</small>
+            </div>
+
+            <div class="card-footer">
+              <a [href]="cv.fichierUrl" target="_blank" class="btn-download">
+                📄 Télécharger le CV
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <p>Aucun CV enregistré.</p>
+      </div>
+    }
+  }
+
+  <!-- Modal Complexe (Création CV) -->
+  @if (showModal()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Nouveau CV & Parcours</h3>
+          <button class="btn-close" (click)="closeModal()">×</button>
+        </div>
+
+        <form [formGroup]="cvForm" (ngSubmit)="onSubmit()">
+          <div class="form-section">
+            <h4>Informations Générales</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Candidat</label>
+                <select formControlName="candidatId">
+                  <option value="" disabled>Sélectionner un candidat</option>
+                  @for (c of candidats(); track c.id) {
+                    <option [value]="c.id">{{ c.nom }} {{ c.prenom }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Titre du CV</label>
+                <input type="text" formControlName="titre" placeholder="Ex: Développeur Angular Senior" />
+              </div>
+            </div>
+
+            <!-- Upload File -->
+            <div class="form-group full-width">
+              <label>Fichier du CV (PDF/DOCX)</label>
+              <div class="file-drop-zone">
+                <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx" id="fileInput" hidden />
+                <label for="fileInput" class="file-label">
+                  📁 {{ selectedFileName() || 'Cliquer pour choisir un fichier' }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section Compétences -->
+          <div class="form-section">
+            <h4>Compétences</h4>
+            <div class="chips-selector">
+              @for (comp of competences(); track comp.id) {
+                <button 
+                  type="button" 
+                  class="chip-btn" 
+                  [class.active]="isCompetenceSelected(comp.id)"
+                  (click)="toggleCompetence(comp.id)">
+                  {{ comp.libelle }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Section Expériences Imbriquées -->
+          <div class="form-section">
+            <div class="section-title-action">
+              <h4>Expériences</h4>
+              <button type="button" class="btn-small" (click)="addExperience()">+ Ajouter</button>
+            </div>
+
+            <div formArrayName="experiences">
+              @for (exp of experiencesArray.controls; track $index; let i = $index) {
+                <div [formGroupName]="i" class="nested-group">
+                  <div class="group-header">
+                    <span>Expérience #{{ i + 1 }}</span>
+                    <button type="button" class="btn-text-danger" (click)="removeExperience(i)">Supprimer</button>
+                  </div>
+                  <div class="form-grid">
+                    <input type="text" formControlName="poste" placeholder="Poste" />
+                    <input type="text" formControlName="entreprise" placeholder="Entreprise" />
+                    <input type="date" formControlName="dateDebut" />
+                    <input type="date" formControlName="dateFin" />
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Section Formations Imbriquées -->
+          <div class="form-section">
+            <div class="section-title-action">
+              <h4>Formations</h4>
+              <button type="button" class="btn-small" (click)="addFormation()">+ Ajouter</button>
+            </div>
+
+            <div formArrayName="formations">
+              @for (form of formationsArray.controls; track $index; let i = $index) {
+                <div [formGroupName]="i" class="nested-group">
+                  <div class="group-header">
+                    <span>Formation #{{ i + 1 }}</span>
+                    <button type="button" class="btn-text-danger" (click)="removeFormation(i)">Supprimer</button>
+                  </div>
+                  <div class="form-grid">
+                    <input type="text" formControlName="diplome" placeholder="Diplôme" />
+                    <input type="text" formControlName="etablissement" placeholder="Établissement" />
+                    <input type="number" formControlName="anneeObtention" placeholder="Année" />
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
+            <button type="submit" class="btn-primary" [disabled]="cvForm.invalid || isSubmitting()">
+              {{ isSubmitting() ? 'Enregistrement...' : 'Créer le CV' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

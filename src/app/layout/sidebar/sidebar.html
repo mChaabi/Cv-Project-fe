@@ -1,0 +1,54 @@
+<aside class="sidebar-container">
+  <div class="sidebar-brand">
+    <span class="brand-mark">CV</span>
+    <div class="brand-text">
+      <h2>CV Employee</h2>
+      <span>Portail Recrutement</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-scroll">
+    <div class="menu-category">Principal</div>
+
+    <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
+      <span class="label">Tableau de bord</span>
+    </a>
+
+    <div class="menu-category">Gestion RH</div>
+
+    <a routerLink="/candidats" routerLinkActive="active" class="menu-item">
+      <span class="label">Candidats</span>
+      <span class="badge" *ngIf="totalCandidats() > 0">{{ totalCandidats() }}</span>
+    </a>
+
+    <a routerLink="/candidatures" routerLinkActive="active" class="menu-item">
+      <span class="label">Candidatures</span>
+    </a>
+
+    <a routerLink="/offres" routerLinkActive="active" class="menu-item">
+      <span class="label">Offres d'emploi</span>
+    </a>
+
+    <a routerLink="/cvs" routerLinkActive="active" class="menu-item">
+      <span class="label">CVs &amp; Profils</span>
+    </a>
+
+    <div class="menu-category">Paramètres</div>
+
+    <a routerLink="/competences" routerLinkActive="active" class="menu-item">
+      <span class="label">Compétences</span>
+    </a>
+
+    <a routerLink="/experiences" routerLinkActive="active" class="menu-item">
+      <span class="label">Expériences</span>
+    </a>
+
+    <a routerLink="/formations" routerLinkActive="active" class="menu-item">
+      <span class="label">Formations</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="onLogout()">Déconnexion</button>
+  </div>
+</aside>
