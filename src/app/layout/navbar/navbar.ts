@@ -1,17 +1,24 @@
 import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { NotificationService } from '../../services/notification';
+import { Notification } from '../../models/notification';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, DatePipe],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.scss']
 })
 export class NavbarComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   public translate = inject(TranslateService);
+  private notificationService = inject(NotificationService);
+
+  notifications: Notification[] = [];
+  unreadCount = 0;
+  showNotifications = false;
 
   userName: string = 'Utilisateur';
   userRoleDisplay: string = 'Invité';
@@ -21,6 +28,7 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.translate.addLangs(['fr', 'en', 'es', 'ar']);
     this.translate.use('fr');
+    this.loadNotifications();
 
     if (isPlatformBrowser(this.platformId)) {
       try {
@@ -48,6 +56,21 @@ export class NavbarComponent implements OnInit {
     return this.translate.instant(key);
   }
 
+  loadNotifications(): void {
+    console.log('🔔 Chargement notifications...');
+    this.notificationService.getNotifications().subscribe({
+      next: (data) => {
+        console.log('✅ Notifications reçues:', data);
+        this.notifications = data;
+        this.unreadCount = data.filter(n => !n.read).length; // <-- Usar 'read'
+        console.log('🔴 Non lues:', this.unreadCount);
+      },
+      error: (error) => {
+        console.error('❌ Erreur API notifications:', error);
+      }
+    });
+  }
+
   // Récupérer proprement la langue courante pour le [value] du select
   get currentLang(): string {
     const currentLangSignal = this.translate.currentLang;
@@ -63,7 +86,7 @@ export class NavbarComponent implements OnInit {
   }
 
   switchLanguage(lang: string): void {
-    this.translate.use(lang).subscribe(() => {});
+    this.translate.use(lang).subscribe(() => { });
     if (isPlatformBrowser(this.platformId)) {
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = lang;
@@ -97,5 +120,45 @@ export class NavbarComponent implements OnInit {
         localStorage.setItem('appTheme', 'light');
       }
     }
+  }
+
+  toggleNotifications(): void {
+    this.showNotifications = !this.showNotifications;
+
+    console.log('CLICK NOTIFICATION');
+    console.log('showNotifications:', this.showNotifications);
+    console.log('notifications:', this.notifications);
+  }
+
+  markAsRead(notification: Notification): void {
+    if (notification.read) { // <-- Usar 'read'
+      return;
+    }
+
+    this.notificationService.markAsRead(notification.id)
+      .subscribe({
+        next: () => {
+          notification.read = true; // <-- Usar 'read'
+          this.unreadCount--;
+        },
+        error: (error) => {
+          console.error('Erreur lors du marquage comme lu', error);
+        }
+      });
+  }
+
+  markAllAsRead(): void {
+    this.notificationService.markAllAsRead()
+      .subscribe({
+        next: () => {
+          this.notifications.forEach(
+            notification => notification.read = true // <-- Usar 'read'
+          );
+          this.unreadCount = 0;
+        },
+        error: (error) => {
+          console.error('Erreur lors du marquage des notifications', error);
+        }
+      });
   }
 }

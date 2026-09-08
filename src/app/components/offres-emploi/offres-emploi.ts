@@ -8,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-offres-emploi',
   standalone: true,
-  imports: [CommonModule,TranslatePipe],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './offres-emploi.html',
   styleUrls: ['./offres-emploi.scss']
 })

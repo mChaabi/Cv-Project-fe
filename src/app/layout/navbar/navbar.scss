@@ -19,7 +19,6 @@
   gap: 24px;
   transition: background 0.3s ease, border-color 0.3s ease;
 
-  // Support du mode sombre global si activé
   &.dark-theme {
     --navbar-bg: #232A35;
     --ink: #ffffff;
@@ -48,7 +47,7 @@
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
@@ -56,14 +55,14 @@
   position: relative;
   background: var(--navbar-bg);
   border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 7px 14px;
-  font-size: 12px;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
   font-family: var(--font-sans);
   color: var(--ink);
   cursor: pointer;
   white-space: nowrap;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: all 0.2s ease;
 
   &:hover {
     border-color: var(--accent);
@@ -71,18 +70,145 @@
   }
 }
 
-.has-badge {
-  padding-right: 22px;
+/* Badge de comptage professionnel */
+.badge-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-.badge-dot {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
+/* CONTENEUR DE NOTIFICATIONS & CARTE TRANSPARENTE (GLASSMORPHISM) */
+.notification-container {
+  position: relative;
+
+  .notification-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 12px);
+    width: 360px;
+    max-height: 440px;
+    overflow-y: auto;
+    
+    /* Effet Glassmorphism Professionnel */
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+    animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+    .dark-theme & {
+      background: rgba(35, 42, 53, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .notification-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--ink);
+
+      .mark-all-btn {
+        background: none;
+        border: none;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: background 0.15s;
+
+        &:hover {
+          background: rgba(107, 39, 55, 0.08);
+        }
+      }
+    }
+
+    .empty-notifications {
+      padding: 32px;
+      text-align: center;
+      color: var(--gray);
+      font-size: 13px;
+    }
+
+    /* ÉLÉMENTS DE NOTIFICATION AVEC EFFET HOVER */
+    .notification-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      /* Effet Hover pro (survol de la card de notification) */
+      &:hover {
+        background: rgba(107, 39, 55, 0.06);
+        transform: translateX(3px); // Petit déplacement fluide vers la droite
+
+        .dark-theme & {
+          background: rgba(255, 255, 255, 0.06);
+        }
+      }
+
+      &.unread {
+        background: rgba(107, 39, 55, 0.02);
+        border-left: 3px solid var(--accent);
+      }
+
+      .notification-icon {
+        font-size: 16px;
+        margin-top: 2px;
+      }
+
+      .notification-content {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+
+        p {
+          margin: 0;
+          font-size: 13px;
+          color: var(--ink);
+          line-height: 1.4;
+        }
+
+        small {
+          font-size: 11px;
+          color: var(--gray);
+        }
+      }
+    }
+  }
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .divider {
@@ -128,16 +254,14 @@
   }
 }
 
-@media (max-width: 1100px) {
-  .search-input { max-width: 220px; }
-}
 .language-select {
   background: transparent;
-  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--border);
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
+  color: var(--ink);
   font-weight: 500;
   outline: none;
   transition: all 0.2s ease;
@@ -145,4 +269,8 @@
   &:hover {
     background: rgba(0, 0, 0, 0.05);
   }
+}
+
+@media (max-width: 1100px) {
+  .search-input { max-width: 220px; }
 }

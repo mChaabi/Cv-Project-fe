@@ -8,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-offre-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './offre-create.html',
   styleUrls: ['./offre-create.scss']
 })
@@ -23,6 +23,7 @@ export class OffreCreateComponent {
     titre: ['', [Validators.required, Validators.minLength(3)]],
     description: ['', [Validators.required]],
     departement: ['', [Validators.required]],
+    typeContrat: ['CDI', [Validators.required]], // <-- Añadir este campo con un valor por défaut
     statut: ['OUVERTE', [Validators.required]]
   });
 

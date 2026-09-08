@@ -12,13 +12,14 @@
           <label>{{ 'offreCreate.titre' | translate }} <span class="required">*</span></label>
           <input type="text" formControlName="titre" [placeholder]="'offreCreate.titrePlaceholder' | translate" />
           @if (offreForm.get('titre')?.touched && offreForm.get('titre')?.invalid) {
-            <span class="error-hint">{{ 'offreCreate.titreError' | translate }}</span>
+          <span class="error-hint">{{ 'offreCreate.titreError' | translate }}</span>
           }
         </div>
 
         <div class="form-group">
           <label>{{ 'offreCreate.departement' | translate }} <span class="required">*</span></label>
-          <input type="text" formControlName="departement" [placeholder]="'offreCreate.departementPlaceholder' | translate" />
+          <input type="text" formControlName="departement"
+            [placeholder]="'offreCreate.departementPlaceholder' | translate" />
         </div>
 
         <div class="form-group">
@@ -29,9 +30,20 @@
           </select>
         </div>
 
+        <div class="form-group">
+          <label>{{ 'offreCreate.typeContrat' | translate }} <span class="required">*</span></label>
+          <select formControlName="typeContrat">
+            <option value="CDI">CDI</option>
+            <option value="CDD">CDD</option>
+            <option value="STAGE">Stage</option>
+            <option value="FREELANCE">Freelance</option>
+          </select>
+        </div>
+
         <div class="form-group full-width">
           <label>{{ 'offreCreate.description' | translate }} <span class="required">*</span></label>
-          <textarea formControlName="description" rows="6" [placeholder]="'offreCreate.descriptionPlaceholder' | translate"></textarea>
+          <textarea formControlName="description" rows="6"
+            [placeholder]="'offreCreate.descriptionPlaceholder' | translate"></textarea>
         </div>
 
       </div>
