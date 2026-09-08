@@ -242,3 +242,54 @@
     box-sizing: border-box;
   }
 }
+
+// ... (conserva todo tu código SCSS previo y añade esto al final)
+
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--gray);
+  box-sizing: border-box;
+
+  .pagination-controls {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+
+    .page-btn {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      padding: 0.4rem 0.75rem;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+
+      &:hover:not(:disabled) {
+        background-color: var(--paper);
+        border-color: var(--gray);
+      }
+
+      &.active {
+        background-color: var(--accent);
+        color: #ffffff;
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

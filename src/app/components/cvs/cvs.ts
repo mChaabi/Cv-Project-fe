@@ -15,7 +15,7 @@ interface CandidateGroup {
 @Component({
   selector: 'app-cvs',
   standalone: true,
-  imports: [CommonModule,TranslatePipe],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './cvs.html',
   styleUrls: ['./cvs.scss']
 })
@@ -26,6 +26,9 @@ export class CVs implements OnInit {
   cvs = signal<Cv[]>([]);
   isLoading = signal(true);
   selectedCvDetail = signal<Cv | null>(null);
+  // Parámetros de paginación (por ejemplo, 3 grupos de candidatos por página)
+  currentPage = signal<number>(1);
+  pageSize = 3;
 
   groupedCvs = computed<CandidateGroup[]>(() => {
     const map = new Map<number, CandidateGroup>();
@@ -58,6 +61,23 @@ export class CVs implements OnInit {
     return Array.from(map.values());
   });
 
+  // Calcul dynamique des pages totales pour les groupes
+  totalPages = computed(() => {
+    return Math.ceil(this.groupedCvs().length / this.pageSize) || 1;
+  });
+
+  totalPagesArray = computed(() => {
+    const total = this.totalPages();
+    return Array.from({ length: total }, (_, i) => i + 1);
+  });
+
+  // Extraction uniquement des groupes de la page active
+  paginatedGroupedCvs = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.groupedCvs().slice(start, end);
+  });
+
   ngOnInit(): void {
     this.loadCvs();
   }
@@ -65,9 +85,24 @@ export class CVs implements OnInit {
   loadCvs(): void {
     this.isLoading.set(true);
     this.cvService.getAll().subscribe({
-      next: (data) => { this.cvs.set(data); this.isLoading.set(false); },
+      next: (data) => {
+        this.cvs.set(data);
+        this.isLoading.set(false);
+        this.currentPage.set(1);
+      },
       error: () => this.isLoading.set(false)
     });
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+
+  mathMin(a: number, b: number): number {
+    return Math.min(a, b);
   }
 
   navigateToUpload(): void {
@@ -96,6 +131,9 @@ export class CVs implements OnInit {
     if (!confirm('Supprimer ce CV ?')) return;
     this.cvService.delete(id).subscribe(() => {
       this.cvs.update(list => list.filter(c => c.id !== id));
+      if (this.paginatedGroupedCvs().length === 0 && this.currentPage() > 1) {
+        this.currentPage.update(p => p - 1);
+      }
     });
   }
 }

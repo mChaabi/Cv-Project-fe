@@ -1,12 +1,12 @@
-// Variables globales de style
-$primary-color: #2563eb;
-$primary-hover: #1d4ed8;
+// Variables globales de style (ajoutez ou vérifiez ces lignes au tout début de votre fichier)
+$primary-color: #581c20; // Votre couleur bordeaux (sidebar/candidatures)
+$primary-hover: #3f1317;
 $bg-color: #f8fafc;
 $card-bg: #ffffff;
 $text-main: #1e293b;
 $text-muted: #64748b;
 $border-color: #e2e8f0;
-$danger-color: #ef4444;
+$danger-color: #ef4444; // <-- C'est cette ligne qui manquait ou était mal portée
 $radius: 10px;
 $transition: all 0.2s ease-in-out;
 
@@ -49,7 +49,8 @@ $transition: all 0.2s ease-in-out;
     }
   }
 
-  .loading-state, .empty-state {
+  .loading-state,
+  .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -145,6 +146,7 @@ $transition: all 0.2s ease-in-out;
 
         &.view {
           color: #0284c7;
+
           &:hover {
             background-color: rgba(2, 132, 199, 0.1);
           }
@@ -152,6 +154,7 @@ $transition: all 0.2s ease-in-out;
 
         &.edit {
           color: $primary-color;
+
           &:hover {
             background-color: rgba(37, 99, 235, 0.1);
           }
@@ -159,6 +162,7 @@ $transition: all 0.2s ease-in-out;
 
         &.delete {
           color: $danger-color;
+
           &:hover {
             background-color: rgba(239, 68, 68, 0.1);
           }
@@ -168,6 +172,56 @@ $transition: all 0.2s ease-in-out;
   }
 }
 
+
+// ... (gardez tout votre code SCSS existant et ajoutez ceci à la fin)
+
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: $card-bg;
+  border-top: 1px solid $border-color;
+  font-size: 0.875rem;
+  color: $text-muted;
+
+  .pagination-controls {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+
+    .page-btn {
+      background: $card-bg;
+      border: 1px solid $border-color;
+      color: $text-main;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: $transition;
+
+      &:hover:not(:disabled) {
+        background-color: #f1f5f9;
+        border-color: #cbd5e1;
+      }
+
+      &.active {
+        background-color: $primary-color;
+        color: #ffffff;
+        border-color: $primary-color;
+        font-weight: 600;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

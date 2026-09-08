@@ -14,7 +14,8 @@
     <div class="empty-state">{{ 'CV_LIST.EMPTY' | translate }}</div>
   } @else {
     <div class="candidate-groups">
-      @for (group of groupedCvs(); track group.candidatId) {
+      <!-- Utilisation de paginatedGroupedCvs() au lieu de groupedCvs() -->
+      @for (group of paginatedGroupedCvs(); track group.candidatId) {
         <section class="candidate-group">
           <div class="candidate-header">
             <div class="candidate-avatar">{{ group.initials }}</div>
@@ -56,6 +57,28 @@
           </div>
         </section>
       }
+    </div>
+
+    <!-- BARRE DE PAGINATION -->
+    <div class="pagination-bar">
+      <span class="pagination-info">
+        Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, groupedCvs().length) }} sur {{ groupedCvs().length }} candidats
+      </span>
+      <div class="pagination-controls">
+        <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
+          Précédent
+        </button>
+        
+        @for (page of totalPagesArray(); track page) {
+          <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
+            {{ page }}
+          </button>
+        }
+
+        <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
+          Suivant
+        </button>
+      </div>
     </div>
   }
 

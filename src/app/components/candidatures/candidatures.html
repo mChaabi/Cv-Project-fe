@@ -33,7 +33,8 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of candidatures(); track item.id) {
+            <!-- Utilisation de paginatedCandidatures() -->
+            @for (item of paginatedCandidatures(); track item.id) {
               <tr>
                 <td>
                   <div class="candidate-info">
@@ -75,6 +76,29 @@
           </tbody>
         </table>
       </div>
+
+      <!-- BARRE DE PAGINATION -->
+      <div class="pagination-bar">
+        <span class="pagination-info">
+          Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, candidatures().length) }} sur {{ candidatures().length }} candidatures
+        </span>
+        <div class="pagination-controls">
+          <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
+            Précédent
+          </button>
+          
+          @for (page of totalPagesArray(); track page) {
+            <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
+              {{ page }}
+            </button>
+          }
+
+          <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
+            Suivant
+          </button>
+        </div>
+      </div>
+
     } @else {
       <div class="empty-state">
         <p>{{ 'candidatures.empty' | translate }}</p>

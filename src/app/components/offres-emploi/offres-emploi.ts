@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { OffreEmploiService } from '../../services/offre-emploi';
@@ -20,16 +20,38 @@ export class OffresEmploiComponent implements OnInit {
   isLoading = signal<boolean>(true);
   filterStatut = signal<string>('ALL');
 
+  // Paramètres de pagination (par exemple, 6 éléments par page pour s'adapter à une grille)
+  currentPage = signal<number>(1);
+  pageSize = 6;
+
+  // Calcul dynamique des pages totales
+  totalPages = computed(() => {
+    return Math.ceil(this.offres().length / this.pageSize) || 1;
+  });
+
+  // Tableau pour générer les boutons de numéros de page
+  totalPagesArray = computed(() => {
+    const total = this.totalPages();
+    return Array.from({ length: total }, (_, i) => i + 1);
+  });
+
+  // Extraction uniquement des éléments de la page active
+  paginatedOffres = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.offres().slice(start, end);
+  });
+
   ngOnInit(): void {
     this.loadOffres();
   }
-
   loadOffres(): void {
     this.isLoading.set(true);
     this.offreService.getAll().subscribe({
       next: (data) => {
         this.offres.set(data);
         this.isLoading.set(false);
+        this.currentPage.set(1);
       },
       error: (err) => {
         console.error(err);
@@ -41,6 +63,7 @@ export class OffresEmploiComponent implements OnInit {
   onFilterChange(event: Event): void {
     const statut = (event.target as HTMLSelectElement).value;
     this.filterStatut.set(statut);
+    this.currentPage.set(1); // Retour à la première page lors d'un changement de filtre
 
     if (statut === 'ALL') {
       this.loadOffres();
@@ -53,6 +76,16 @@ export class OffresEmploiComponent implements OnInit {
         }
       });
     }
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  mathMin(a: number, b: number): number {
+    return Math.min(a, b);
   }
 
   navigateToCreate(): void {

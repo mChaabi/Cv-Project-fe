@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CandidatureService } from '../../services/candidature';
@@ -35,8 +35,28 @@ export class CandidaturesComponent implements OnInit {
   isSubmitting = signal<boolean>(false);
   filterStatut = signal<string>('ALL');
 
+
+  // Parámetros de paginación (por ejemplo, 5 elementos por página)
+  currentPage = signal<number>(1);
+  pageSize = 5;
   statutsList: StatutCandidature[] = ['RECUE', 'PRESELECTIONNEE', 'ENTRETIEN', 'ACCEPTEE', 'REFUSEE'];
 
+
+  // Cálculos reactivos para la paginación
+  totalPages = computed(() => {
+    return Math.ceil(this.candidatures().length / this.pageSize) || 1;
+  });
+
+  totalPagesArray = computed(() => {
+    const total = this.totalPages();
+    return Array.from({ length: total }, (_, i) => i + 1);
+  });
+
+  paginatedCandidatures = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.candidatures().slice(start, end);
+  });
   candidatureForm: FormGroup = this.fb.group({
     candidatId: ['', [Validators.required]],
     offreId: ['', [Validators.required]],
@@ -55,6 +75,7 @@ export class CandidaturesComponent implements OnInit {
       next: (data) => {
         this.candidatures.set(data);
         this.isLoading.set(false);
+        this.currentPage.set(1);
       },
       error: (err) => {
         console.error(err);
@@ -69,6 +90,16 @@ export class CandidaturesComponent implements OnInit {
     this.offreService.getAll().subscribe({
       next: (data) => this.offres.set(data)
     });
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  mathMin(a: number, b: number): number {
+    return Math.min(a, b);
   }
 
   onCandidatChange(event: Event): void {
@@ -96,6 +127,7 @@ export class CandidaturesComponent implements OnInit {
   onFilterChange(event: Event): void {
     const statut = (event.target as HTMLSelectElement).value;
     this.filterStatut.set(statut);
+    this.currentPage.set(1); // Reiniciar a la primera página al filtrar
 
     if (statut === 'ALL') {
       this.loadInitialData();
@@ -148,6 +180,7 @@ export class CandidaturesComponent implements OnInit {
         this.candidatures.update(list => [newCandidature, ...list]);
         this.closeModal();
         this.isSubmitting.set(false);
+        this.currentPage.set(1); // Volver al inicio para ver el elemento recién añadido
       },
       error: (err) => {
         console.error(err);
@@ -155,11 +188,16 @@ export class CandidaturesComponent implements OnInit {
       }
     });
   }
-
   deleteCandidature(id: number): void {
     if (confirm('Voulez-vous supprimer cette candidature ?')) {
       this.candidatureService.delete(id).subscribe({
-        next: () => this.candidatures.update(list => list.filter(c => c.id !== id))
+        next: () => {
+          this.candidatures.update(list => list.filter(c => c.id !== id));
+          // Ajustar página si la actual se queda vacía
+          if (this.paginatedCandidatures().length === 0 && this.currentPage() > 1) {
+            this.currentPage.update(p => p - 1);
+          }
+        }
       });
     }
   }

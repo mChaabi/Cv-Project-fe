@@ -26,7 +26,8 @@
             </tr>
           </thead>
           <tbody>
-            @for (c of candidats(); track c.id) {
+            <!-- Utilisation de paginatedCandidats() au lieu de candidats() -->
+            @for (c of paginatedCandidats(); track c.id) {
               <tr>
                 <td>#{{ c.id }}</td>
                 <td class="font-bold">{{ c.nom }} {{ c.prenom }}</td>
@@ -49,6 +50,29 @@
             }
           </tbody>
         </table>
+
+        <!-- BARRE DE PAGINATION -->
+        <div class="pagination-bar">
+          <span class="pagination-info">
+            Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, candidats().length) }} sur {{ candidats().length }} candidats
+          </span>
+          <div class="pagination-controls">
+            <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
+              Précédent
+            </button>
+            
+            @for (page of totalPagesArray(); track page) {
+              <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
+                {{ page }}
+              </button>
+            }
+
+            <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
+              Suivant
+            </button>
+          </div>
+        </div>
+
       </div>
     } @else {
       <div class="empty-state">

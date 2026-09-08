@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CandidatService } from '../../../../services/candidat';
@@ -8,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-candidats',
   standalone: true,
-  imports: [CommonModule,TranslatePipe],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './candidats.html',
   styleUrls: ['./candidats.scss']
 })
@@ -21,6 +21,28 @@ export class CandidatsComponent implements OnInit {
   errorMessage = signal<string>('');
   searchQuery = signal<string>('');
 
+  // Paramètres de pagination
+  currentPage = signal<number>(1);
+  pageSize = 5; // Nombre d'éléments par page (modifiable selon vos besoins)
+
+  // Calcul dynamique des pages totales
+  totalPages = computed(() => {
+    return Math.ceil(this.candidats().length / this.pageSize) || 1;
+  });
+
+  // Tableau pour générer les boutons de numéros de page
+  totalPagesArray = computed(() => {
+    const total = this.totalPages();
+    return Array.from({ length: total }, (_, i) => i + 1);
+  });
+
+  // Extraction uniquement des éléments de la page active
+  paginatedCandidats = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.candidats().slice(start, end);
+  });
+
   ngOnInit(): void {
     this.loadCandidats();
   }
@@ -31,6 +53,7 @@ export class CandidatsComponent implements OnInit {
       next: (data) => {
         this.candidats.set(data);
         this.isLoading.set(false);
+        this.currentPage.set(1); // Reset à la 1ère page
       },
       error: (err) => {
         console.error(err);
@@ -43,6 +66,7 @@ export class CandidatsComponent implements OnInit {
   onSearch(event: Event): void {
     const query = (event.target as HTMLInputElement).value;
     this.searchQuery.set(query);
+    this.currentPage.set(1); // Retour à la première page lors d'une recherche
 
     if (query.trim().length > 0) {
       this.candidatService.search(query).subscribe({
@@ -51,6 +75,16 @@ export class CandidatsComponent implements OnInit {
     } else {
       this.loadCandidats();
     }
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  mathMin(a: number, b: number): number {
+    return Math.min(a, b);
   }
 
   viewCandidat(id: number): void {
@@ -68,6 +102,10 @@ export class CandidatsComponent implements OnInit {
       this.candidatService.delete(id).subscribe({
         next: () => {
           this.candidats.update(list => list.filter(c => c.id !== id));
+          // S'assurer de ne pas rester sur une page vide si on supprime le dernier élément
+          if (this.paginatedCandidats().length === 0 && this.currentPage() > 1) {
+            this.currentPage.update(p => p - 1);
+          }
         }
       });
     }

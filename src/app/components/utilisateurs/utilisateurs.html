@@ -1,7 +1,17 @@
 <div class="users-container">
   <!-- Actions Header -->
   <div class="action-bar">
-    <h2>{{ 'USERS.TITLE' | translate }}</h2>
+    <div class="left-actions">
+      <h2>{{ 'USERS.TITLE' | translate }}</h2>
+      <!-- FILTRO POR ROL -->
+      <div class="filter-box">
+        <select (change)="onFilterChange($event)">
+          <option value="ALL">{{ 'Tous les rôles' }}</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="RH">RH</option>
+        </select>
+      </div>
+    </div>
     <button class="btn-primary" (click)="openModal()">
       {{ 'USERS.NEW_USER_BTN' | translate }}
     </button>
@@ -27,7 +37,8 @@
             </tr>
           </thead>
           <tbody>
-            @for (user of utilisateurs(); track user.id) {
+            <!-- Uso de paginatedUtilisateurs() con filtrado integrado -->
+            @for (user of paginatedUtilisateurs(); track user.id) {
               <tr>
                 <td>
                   <div class="user-info">
@@ -52,6 +63,29 @@
           </tbody>
         </table>
       </div>
+
+      <!-- BARRE DE PAGINATION -->
+      <div class="pagination-bar">
+        <span class="pagination-info">
+          Affichage de {{ filteredUtilisateurs().length > 0 ? (currentPage() - 1) * pageSize + 1 : 0 }} à {{ mathMin(currentPage() * pageSize, filteredUtilisateurs().length) }} sur {{ filteredUtilisateurs().length }} utilisateurs
+        </span>
+        <div class="pagination-controls">
+          <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
+            Précédent
+          </button>
+          
+          @for (page of totalPagesArray(); track page) {
+            <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
+              {{ page }}
+            </button>
+          }
+
+          <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
+            Suivant
+          </button>
+        </div>
+      </div>
+
     } @else {
       <div class="empty-state">
         <p>{{ 'USERS.EMPTY' | translate }}</p>

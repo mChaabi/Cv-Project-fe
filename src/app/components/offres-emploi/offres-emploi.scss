@@ -1,5 +1,5 @@
-$primary-blue: #0284c7;
-$primary-hover: #0369a1;
+$primary-blue: #581c20; // On remplace le bleu par le bordeaux de la sidebar
+$primary-hover: #3f1317;
 $bg-main: #f8fafc;
 $bg-card: #ffffff;
 $border-color: #e2e8f0;
@@ -7,6 +7,9 @@ $text-primary: #0f172a;
 $text-muted: #64748b;
 $success-green: #10b981;
 $danger-red: #ef4444;
+
+// Les boutons .btn-primary et les éléments de pagination .active 
+// prendront ainsi exactement la même teinte que votre menu latéral et vos candidatures.
 
 .offres-container {
   max-width: 1200px;
@@ -146,5 +149,54 @@ $danger-red: #ef4444;
     background: white;
     border-radius: 12px;
     border: 1px dashed $border-color;
+  }
+}
+
+// ... (mantén todo tu SCSS existente y añade esto al final)
+
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding: 1rem 1.5rem;
+  background-color: $bg-card;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  font-size: 0.875rem;
+  color: $text-muted;
+
+  .pagination-controls {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+
+    .page-btn {
+      background: $bg-card;
+      border: 1px solid $border-color;
+      color: $text-primary;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+
+      &:hover:not(:disabled) {
+        background-color: #f1f5f9;
+        border-color: #cbd5e1;
+      }
+
+      &.active {
+        background-color: $primary-blue;
+        color: #ffffff;
+        border-color: $primary-blue;
+        font-weight: 600;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
   }
 }

@@ -28,7 +28,8 @@
   } @else {
     @if (offres().length > 0) {
       <div class="offres-grid">
-        @for (offre of offres(); track offre.id) {
+        <!-- Utilisation de paginatedOffres() au lieu de offres() -->
+        @for (offre of paginatedOffres(); track offre.id) {
           <div class="offre-card">
             <div class="card-header">
               <span class="badge" [class.badge-open]="offre.statut === 'OUVERTE'" [class.badge-closed]="offre.statut === 'FERMEE'">
@@ -47,6 +48,29 @@
           </div>
         }
       </div>
+
+      <!-- BARRE DE PAGINATION -->
+      <div class="pagination-bar">
+        <span class="pagination-info">
+          Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, offres().length) }} sur {{ offres().length }} offres
+        </span>
+        <div class="pagination-controls">
+          <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
+            Précédent
+          </button>
+          
+          @for (page of totalPagesArray(); track page) {
+            <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
+              {{ page }}
+            </button>
+          }
+
+          <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
+            Suivant
+          </button>
+        </div>
+      </div>
+
     } @else {
       <div class="empty-state">
         <p>{{ 'offres.empty' | translate }}</p>

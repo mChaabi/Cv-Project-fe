@@ -1,8 +1,8 @@
-$primary-blue: #0284c7;
-$primary-hover: #0369a1;
-$bg-main: #f0f9ff;
+$primary-color: #581c20;      // Bordeaux de votre sidebar / candidatures
+$primary-hover: #3f1317;      // Bordeaux plus sombre pour le survol
+$bg-main: #f8fafc;
 $bg-card: #ffffff;
-$border-color: #e0f2fe;
+$border-color: #e2e8f0;
 $text-primary: #0f172a;
 $text-muted: #64748b;
 $purple-admin: #8b5cf6;
@@ -19,17 +19,45 @@ $blue-rh: #3b82f6;
     align-items: center;
     margin-bottom: 1.5rem;
 
-    h2 { margin: 0; color: $text-primary; }
+    h2 { 
+      margin: 0; 
+      color: $text-primary; 
+    }
+
+    .left-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+
+      .filter-box {
+        select {
+          padding: 0.5rem 0.75rem;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          background-color: $bg-card;
+          color: $text-primary;
+          font-size: 0.85rem;
+          font-weight: 500;
+          outline: none;
+          cursor: pointer;
+
+          &:focus {
+            border-color: $primary-color;
+          }
+        }
+      }
+    }
   }
 
   .btn-primary {
-    background: $primary-blue;
+    background: $primary-color;
     color: white;
     border: none;
     padding: 0.65rem 1.25rem;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
+    transition: background 0.2s ease-in-out;
 
     &:hover { background: $primary-hover; }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -50,7 +78,7 @@ $blue-rh: #3b82f6;
     background: $bg-card;
     border-radius: 12px;
     border: 1px solid $border-color;
-    box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
     overflow: hidden;
 
     .users-table {
@@ -86,8 +114,8 @@ $blue-rh: #3b82f6;
           width: 34px;
           height: 34px;
           border-radius: 50%;
-          background: #e0f2fe;
-          color: $primary-blue;
+          background: #f1f5f9;
+          color: $primary-color;
           font-weight: 700;
           display: flex;
           align-items: center;
@@ -133,6 +161,7 @@ $blue-rh: #3b82f6;
     padding: 1.5rem;
     width: 100%;
     max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
     .modal-header {
       display: flex;
@@ -141,7 +170,7 @@ $blue-rh: #3b82f6;
       margin-bottom: 1.25rem;
 
       h3 { margin: 0; color: $text-primary; }
-      .btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+      .btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: $text-muted; }
     }
 
     .form-grid {
@@ -160,8 +189,10 @@ $blue-rh: #3b82f6;
           border: 1px solid #cbd5e1;
           border-radius: 8px;
           outline: none;
+          background: $bg-card;
+          color: $text-primary;
 
-          &:focus { border-color: $primary-blue; }
+          &:focus { border-color: $primary-color; }
         }
       }
     }
@@ -178,5 +209,54 @@ $blue-rh: #3b82f6;
     text-align: center;
     padding: 3rem;
     color: $text-muted;
+  }
+}
+
+/* Pagination Bar */
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background-color: $bg-card;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  font-size: 13px;
+  color: $text-muted;
+
+  .pagination-controls {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+
+    .page-btn {
+      background: $bg-card;
+      border: 1px solid $border-color;
+      color: $text-primary;
+      padding: 0.4rem 0.75rem;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+
+      &:hover:not(:disabled) {
+        background-color: #f8fafc;
+        border-color: #cbd5e1;
+      }
+
+      &.active {
+        background-color: $primary-color;
+        color: #ffffff;
+        border-color: $primary-color;
+        font-weight: 600;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
   }
 }
