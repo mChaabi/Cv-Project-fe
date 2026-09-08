@@ -1,32 +1,38 @@
-/* Variables de design system (modernes et épurées) */
-$primary-blue: #0284c7;
-$primary-hover: #0369a1;
-$bg-main: #f8fafc;
+/* Variables de design system cohérentes avec l'application */
+$accent: #6B2737;
+$accent-hover: #5A1F2E;
+$slate: #232A35;
+$ink: #1B1F27;
+$paper: #F5F3EF;
 $bg-card: #ffffff;
-$border-color: #e2e8f0;
-$border-focus: #0284c7;
-$text-primary: #0f172a;
-$text-muted: #64748b;
-$error-bg: #fee2e2;
-$error-text: #b91c1c;
-$success-bg: #dcfce7;
-$success-text: #15803d;
+$border-color: rgba(27, 31, 39, 0.12);
+$border-focus: #6B2737;
+$text-primary: #1B1F27;
+$text-muted: #8A8F98;
+$error-bg: #FEF2F2;
+$error-text: #DC2626;
+$success-bg: #F0FDF4;
+$success-text: #16A34A;
+
+$font-serif: 'Source Serif Pro', Georgia, serif;
+$font-sans: 'Inter', system-ui, sans-serif;
 
 .auth-container {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: linear-gradient(135deg, #F5F3EF 0%, #E2E8F0 100%);
   padding: 1.5rem;
+  font-family: $font-sans;
 
   .auth-card {
     background: $bg-card;
     padding: 2.5rem;
-    border-radius: 20px;
+    border-radius: 12px;
     border: 1px solid $border-color;
-    box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.1), 
-                0 8px 10px -6px rgba(14, 165, 233, 0.1);
+    box-shadow: 0 10px 25px -5px rgba(27, 31, 39, 0.08), 
+                0 8px 10px -6px rgba(27, 31, 39, 0.04);
     width: 100%;
     max-width: 440px;
     box-sizing: border-box;
@@ -37,15 +43,16 @@ $success-text: #15803d;
       margin-bottom: 2rem;
 
       h2 {
-        margin: 0;
-        color: $text-primary;
-        font-size: 1.75rem;
+        margin: 0 0 6px;
+        color: $slate;
+        font-family: $font-serif;
+        font-size: 2rem;
         font-weight: 700;
-        letter-spacing: -0.025em;
+        letter-spacing: -0.02em;
       }
 
       p {
-        margin: 0.5rem 0 0;
+        margin: 0;
         color: $text-muted;
         font-size: 0.9rem;
       }
@@ -54,7 +61,7 @@ $success-text: #15803d;
     /* Alertes et notifications (Erreur / Succès) */
     .alert {
       padding: 0.85rem 1rem;
-      border-radius: 10px;
+      border-radius: 8px;
       font-size: 0.85rem;
       margin-bottom: 1.25rem;
       text-align: center;
@@ -63,13 +70,13 @@ $success-text: #15803d;
       &.error {
         background: $error-bg;
         color: $error-text;
-        border: 1px solid #fecaca;
+        border: 1px solid #FECACA;
       }
 
       &.success {
         background: $success-bg;
         color: $success-text;
-        border: 1px solid #bbf7d0;
+        border: 1px solid #BBF7D0;
       }
     }
 
@@ -83,13 +90,13 @@ $success-text: #15803d;
       label {
         font-size: 0.85rem;
         font-weight: 600;
-        color: $text-primary;
+        color: $slate;
       }
 
       input, select {
         padding: 0.75rem 1rem;
         border: 1px solid $border-color;
-        border-radius: 10px;
+        border-radius: 6px;
         outline: none;
         font-size: 0.95rem;
         color: $text-primary;
@@ -97,12 +104,12 @@ $success-text: #15803d;
         transition: all 0.2s ease;
 
         &::placeholder {
-          color: #94a3b8;
+          color: #A0AEC0;
         }
 
         &:focus {
           border-color: $border-focus;
-          box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+          box-shadow: 0 0 0 3px rgba(107, 39, 55, 0.12);
         }
       }
 
@@ -114,20 +121,20 @@ $success-text: #15803d;
     /* Bouton principal de soumission */
     .btn-submit {
       width: 100%;
-      background: $primary-blue;
+      background: $accent;
       color: white;
       border: none;
       padding: 0.85rem;
-      border-radius: 10px;
+      border-radius: 6px;
       font-weight: 600;
       font-size: 0.95rem;
       cursor: pointer;
       margin-top: 0.75rem;
       transition: background 0.2s, transform 0.1s;
-      box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2);
+      box-shadow: 0 2px 4px rgba(107, 39, 55, 0.2);
 
       &:hover {
-        background: $primary-hover;
+        background: $accent-hover;
       }
 
       &:active {
@@ -149,13 +156,13 @@ $success-text: #15803d;
       color: $text-muted;
 
       a {
-        color: $primary-blue;
+        color: $accent;
         text-decoration: none;
         font-weight: 600;
         transition: color 0.2s;
 
         &:hover {
-          color: $primary-hover;
+          color: $accent-hover;
           text-decoration: underline;
         }
       }
@@ -163,7 +170,7 @@ $success-text: #15803d;
   }
 }
 
-/* Animation douce à l'apparition de la carte */
+/* Animation douce à l'apparition */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -175,7 +182,7 @@ $success-text: #15803d;
   }
 }
 
-/* Responsive pour les petits écrans (mobiles) */
+/* Responsive mobiles */
 @media (max-width: 480px) {
   .auth-container {
     padding: 1rem;

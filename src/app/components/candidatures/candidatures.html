@@ -1,24 +1,22 @@
 <div class="candidatures-container">
-  <!-- Actions Header -->
   <div class="action-bar">
     <div class="filter-box">
       <select (change)="onFilterChange($event)">
-        <option value="ALL">Tous les statuts</option>
+        <option value="ALL">{{ 'candidatures.filterAll' | translate }}</option>
         @for (st of statutsList; track st) {
-          <option [value]="st">{{ st }}</option>
+          <option [value]="st">{{ getStatutLabel(st) | translate }}</option>
         }
       </select>
     </div>
     <button class="btn-primary" (click)="openModal()">
-      + Ajouter une Candidature
+      + {{ 'candidatures.addNew' | translate }}
     </button>
   </div>
 
-  <!-- Data Table Kanban-style Pipeline -->
   @if (isLoading()) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Chargement des candidatures...</p>
+      <p>{{ 'candidatures.loading' | translate }}</p>
     </div>
   } @else {
     @if (candidatures().length > 0) {
@@ -26,12 +24,12 @@
         <table class="candidatures-table">
           <thead>
             <tr>
-              <th>Candidat</th>
-              <th>Offre Visée</th>
-              <th>CV Joit</th>
-              <th>Statut RH</th>
-              <th>Commentaire</th>
-              <th class="text-right">Actions</th>
+              <th>{{ 'candidatures.colCandidat' | translate }}</th>
+              <th>{{ 'candidatures.colOffre' | translate }}</th>
+              <th>{{ 'candidatures.colCv' | translate }}</th>
+              <th>{{ 'candidatures.colStatut' | translate }}</th>
+              <th>{{ 'candidatures.colComment' | translate }}</th>
+              <th class="text-right">{{ 'candidatures.colActions' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -48,19 +46,19 @@
                 </td>
                 <td>
                   @if (item.cv?.fichierUrl) {
-                    <a [href]="item.cv?.fichierUrl" target="_blank" class="cv-link">📄 Voir CV</a>
+                    <a [href]="item.cv?.fichierUrl" target="_blank" class="cv-link">{{ 'candidatures.viewCv' | translate }}</a>
                   } @else {
                     <span class="text-muted">-</span>
                   }
                 </td>
                 <td>
-                  <select 
-                    class="status-select" 
+                  <select
+                    class="status-select"
                     [attr.data-status]="item.statut"
-                    [value]="item.statut" 
+                    [value]="item.statut"
                     (change)="updateStatutDirect(item, $any($event.target).value)">
                     @for (st of statutsList; track st) {
-                      <option [value]="st">{{ st }}</option>
+                      <option [value]="st">{{ getStatutLabel(st) | translate }}</option>
                     }
                   </select>
                 </td>
@@ -70,7 +68,7 @@
                   </span>
                 </td>
                 <td class="text-right">
-                  <button class="btn-icon" (click)="deleteCandidature(item.id)" title="Supprimer">🗑️</button>
+                  <button class="btn-icon" (click)="deleteCandidature(item.id)" [title]="'candidatures.delete' | translate">🗑️</button>
                 </td>
               </tr>
             }
@@ -79,26 +77,25 @@
       </div>
     } @else {
       <div class="empty-state">
-        <p>Aucune candidature enregistrée.</p>
+        <p>{{ 'candidatures.empty' | translate }}</p>
       </div>
     }
   }
 
-  <!-- Modal Formulaire -->
   @if (showModal()) {
     <div class="modal-backdrop" (click)="closeModal()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>Nouvelle Candidature</h3>
+          <h3>{{ 'candidatureModal.title' | translate }}</h3>
           <button class="btn-close" (click)="closeModal()">×</button>
         </div>
 
         <form [formGroup]="candidatureForm" (ngSubmit)="onSubmit()">
           <div class="form-grid">
             <div class="form-group">
-              <label>Candidat</label>
+              <label>{{ 'candidatureModal.candidat' | translate }}</label>
               <select formControlName="candidatId" (change)="onCandidatChange($event)">
-                <option value="" disabled>Sélectionner un candidat</option>
+                <option value="" disabled>{{ 'candidatureModal.selectCandidat' | translate }}</option>
                 @for (c of candidats(); track c.id) {
                   <option [value]="c.id">{{ c.nom }} {{ c.prenom }}</option>
                 }
@@ -106,9 +103,9 @@
             </div>
 
             <div class="form-group">
-              <label>Offre d'emploi</label>
+              <label>{{ 'candidatureModal.offre' | translate }}</label>
               <select formControlName="offreId">
-                <option value="" disabled>Sélectionner une offre</option>
+                <option value="" disabled>{{ 'candidatureModal.selectOffre' | translate }}</option>
                 @for (o of offres(); track o.id) {
                   <option [value]="o.id">{{ o.titre }}</option>
                 }
@@ -116,9 +113,9 @@
             </div>
 
             <div class="form-group">
-              <label>CV associé</label>
+              <label>{{ 'candidatureModal.cv' | translate }}</label>
               <select formControlName="cvId">
-                <option value="" disabled>Sélectionner un CV</option>
+                <option value="" disabled>{{ 'candidatureModal.selectCv' | translate }}</option>
                 @for (cv of cvsCandidat(); track cv.id) {
                   <option [value]="cv.id">{{ cv.titre }}</option>
                 }
@@ -126,24 +123,24 @@
             </div>
 
             <div class="form-group">
-              <label>Statut Initial</label>
+              <label>{{ 'candidatureModal.statutInitial' | translate }}</label>
               <select formControlName="statut">
                 @for (st of statutsList; track st) {
-                  <option [value]="st">{{ st }}</option>
+                  <option [value]="st">{{ getStatutLabel(st) | translate }}</option>
                 }
               </select>
             </div>
 
             <div class="form-group full-width">
-              <label>Commentaire RH</label>
-              <textarea formControlName="commentaireRH" rows="3" placeholder="Notes sur l'entretien, profil..."></textarea>
+              <label>{{ 'candidatureModal.comment' | translate }}</label>
+              <textarea formControlName="commentaireRH" rows="3" [placeholder]="'candidatureModal.commentPlaceholder' | translate"></textarea>
             </div>
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
+            <button type="button" class="btn-secondary" (click)="closeModal()">{{ 'candidatureModal.cancel' | translate }}</button>
             <button type="submit" class="btn-primary" [disabled]="candidatureForm.invalid || isSubmitting()">
-              {{ isSubmitting() ? 'Enregistrement...' : 'Créer la candidature' }}
+              {{ isSubmitting() ? ('candidatureModal.saving' | translate) : ('candidatureModal.create' | translate) }}
             </button>
           </div>
         </form>

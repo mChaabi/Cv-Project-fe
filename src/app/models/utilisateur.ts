@@ -1,4 +1,4 @@
-export type RoleUtilisateur = 'ADMIN' | 'RH';
+export type RoleUtilisateur = 'ADMIN' | 'RH' | 'CANDIDAT';
 
 export interface Utilisateur {
   id?: number;

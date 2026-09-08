@@ -3,8 +3,8 @@
     
     <!-- En-tête dynamique -->
     <div class="auth-header">
-      <h2>{{ isLoginMode() ? 'Connexion' : 'Inscription' }}</h2>
-      <p>{{ isLoginMode() ? 'Accédez à votre espace de gestion RH' : 'Créez votre compte sur CV-Employee' }}</p>
+      <h2>{{ (isLoginMode() ? 'auth.loginTitle' : 'auth.registerTitle') | translate }}</h2>
+      <p>{{ (isLoginMode() ? 'auth.loginSubtitle' : 'auth.registerSubtitle') | translate }}</p>
     </div>
 
     <!-- Messages d'erreur ou de succès -->
@@ -21,25 +21,25 @@
       <!-- Champ Username (Uniquement en mode Inscription) -->
       @if (!isLoginMode()) {
         <div class="form-group">
-          <label>Nom d'utilisateur</label>
-          <input type="text" formControlName="username" placeholder="Ex: mchaabi" />
+          <label>{{ 'auth.username' | translate }}</label>
+          <input type="text" formControlName="username" [placeholder]="'auth.usernamePlaceholder' | translate" />
         </div>
       }
 
       <div class="form-group">
-        <label>Adresse Email</label>
-        <input type="email" formControlName="email" placeholder="nom@entreprise.com" />
+        <label>{{ 'auth.email' | translate }}</label>
+        <input type="email" formControlName="email" [placeholder]="'auth.emailPlaceholder' | translate" />
       </div>
 
       <div class="form-group">
-        <label>Mot de passe</label>
+        <label>{{ 'auth.password' | translate }}</label>
         <input type="password" formControlName="password" placeholder="••••••••" />
       </div>
 
       <!-- Champ Role (Uniquement en mode Inscription) -->
       @if (!isLoginMode()) {
         <div class="form-group">
-          <label>Rôle</label>
+          <label>{{ 'auth.role' | translate }}</label>
           <select formControlName="role">
             <option value="RH">RH</option>
             <option value="ADMIN">ADMIN</option>
@@ -48,16 +48,16 @@
       }
 
       <button type="submit" class="btn-submit" [disabled]="authForm.invalid || isLoading()">
-        {{ isLoading() ? 'Chargement...' : (isLoginMode() ? 'Se connecter' : "S'inscrire") }}
+        {{ isLoading() ? ('auth.loading' | translate) : ((isLoginMode() ? 'auth.loginBtn' : 'auth.registerBtn') | translate) }}
       </button>
     </form>
 
     <!-- Basculeur de mode -->
     <div class="auth-footer">
       @if (isLoginMode()) {
-        <p>Pas encore de compte ? <a href="#" (click)="$event.preventDefault(); toggleMode(false)">S'inscrire</a></p>
+        <p>{{ 'auth.noAccount' | translate }} <a href="#" (click)="$event.preventDefault(); toggleMode(false)">{{ 'auth.registerBtn' | translate }}</a></p>
       } @else {
-        <p>Déjà un compte ? <a href="#" (click)="$event.preventDefault(); toggleMode(true)">Se connecter</a></p>
+        <p>{{ 'auth.hasAccount' | translate }} <a href="#" (click)="$event.preventDefault(); toggleMode(true)">{{ 'auth.loginBtn' | translate }}</a></p>
       }
     </div>
 

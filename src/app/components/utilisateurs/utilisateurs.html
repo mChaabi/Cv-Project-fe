@@ -1,9 +1,9 @@
 <div class="users-container">
   <!-- Actions Header -->
   <div class="action-bar">
-    <h2>Gestion des Utilisateurs</h2>
+    <h2>{{ 'USERS.TITLE' | translate }}</h2>
     <button class="btn-primary" (click)="openModal()">
-      + Nouvel Utilisateur
+      {{ 'USERS.NEW_USER_BTN' | translate }}
     </button>
   </div>
 
@@ -11,7 +11,7 @@
   @if (isLoading()) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Chargement des utilisateurs...</p>
+      <p>{{ 'USERS.LOADING' | translate }}</p>
     </div>
   } @else {
     @if (utilisateurs().length > 0) {
@@ -19,11 +19,11 @@
         <table class="users-table">
           <thead>
             <tr>
-              <th>Utilisateur</th>
-              <th>Email</th>
-              <th>Rôle</th>
-              <th>Date d'ajout</th>
-              <th class="text-right">Actions</th>
+              <th>{{ 'USERS.TABLE.USER' | translate }}</th>
+              <th>{{ 'USERS.TABLE.EMAIL' | translate }}</th>
+              <th>{{ 'USERS.TABLE.ROLE' | translate }}</th>
+              <th>{{ 'USERS.TABLE.DATE' | translate }}</th>
+              <th class="text-right">{{ 'USERS.TABLE.ACTIONS' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -45,7 +45,7 @@
                   {{ user.addedDate ? (user.addedDate | date:'dd/MM/yyyy') : '-' }}
                 </td>
                 <td class="text-right">
-                  <button class="btn-icon" (click)="deleteUtilisateur(user.id!)" title="Supprimer">🗑️</button>
+                  <button class="btn-icon" (click)="deleteUtilisateur(user.id!)" [title]="'USERS.DELETE_TOOLTIP' | translate">🗑️</button>
                 </td>
               </tr>
             }
@@ -54,7 +54,7 @@
       </div>
     } @else {
       <div class="empty-state">
-        <p>Aucun utilisateur trouvé.</p>
+        <p>{{ 'USERS.EMPTY' | translate }}</p>
       </div>
     }
   }
@@ -64,29 +64,29 @@
     <div class="modal-backdrop" (click)="closeModal()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>Créer un Utilisateur</h3>
+          <h3>{{ 'USERS.MODAL.TITLE' | translate }}</h3>
           <button class="btn-close" (click)="closeModal()">×</button>
         </div>
 
         <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
           <div class="form-grid">
             <div class="form-group">
-              <label>Nom d'utilisateur</label>
-              <input type="text" formControlName="username" placeholder="Ex: mchaabi" />
+              <label>{{ 'USERS.MODAL.USERNAME_LABEL' | translate }}</label>
+              <input type="text" formControlName="username" [placeholder]="'USERS.MODAL.USERNAME_PLACEHOLDER' | translate" />
             </div>
 
             <div class="form-group">
-              <label>Adresse Email</label>
-              <input type="email" formControlName="email" placeholder="Ex: utilisateur@domain.com" />
+              <label>{{ 'USERS.MODAL.EMAIL_LABEL' | translate }}</label>
+              <input type="email" formControlName="email" [placeholder]="'USERS.MODAL.EMAIL_PLACEHOLDER' | translate" />
             </div>
 
             <div class="form-group">
-              <label>Mot de passe</label>
+              <label>{{ 'USERS.MODAL.PASSWORD_LABEL' | translate }}</label>
               <input type="password" formControlName="password" placeholder="••••••••" />
             </div>
 
             <div class="form-group">
-              <label>Rôle</label>
+              <label>{{ 'USERS.MODAL.ROLE_LABEL' | translate }}</label>
               <select formControlName="role">
                 <option value="RH">RH</option>
                 <option value="ADMIN">ADMIN</option>
@@ -95,9 +95,9 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
+            <button type="button" class="btn-secondary" (click)="closeModal()">{{ 'USERS.MODAL.CANCEL_BTN' | translate }}</button>
             <button type="submit" class="btn-primary" [disabled]="userForm.invalid || isSubmitting()">
-              {{ isSubmitting() ? 'Création...' : 'Créer l\'utilisateur' }}
+              {{ isSubmitting() ? ('USERS.MODAL.CREATING_BTN' | translate) : ('USERS.MODAL.CREATE_BTN' | translate) }}
             </button>
           </div>
         </form>

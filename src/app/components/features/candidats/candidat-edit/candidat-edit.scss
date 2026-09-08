@@ -1,0 +1,181 @@
+$bg-color: #f8fafc;
+$card-bg: #ffffff;
+$text-main: #1e293b;
+$text-muted: #64748b;
+$border-color: #e2e8f0;
+
+// Nuevos tonos profesionales inspirados en el sidebar oscuro
+$sidebar-dark: #1e293b; 
+$sidebar-dark-hover: #0f172a;
+
+$radius: 12px;
+$transition: all 0.2s ease-in-out;
+
+.edit-container {
+  padding: 2rem;
+  background-color: $bg-color;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    .btn-back {
+      background: transparent;
+      border: 1px solid $border-color;
+      color: $text-muted;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: $transition;
+
+      &:hover {
+        background: #f1f5f9;
+        color: $text-main;
+      }
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: $text-main;
+      margin: 0;
+    }
+  }
+
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem;
+    background: $card-bg;
+    border-radius: $radius;
+    border: 1px solid $border-color;
+    color: $text-muted;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid $border-color;
+      border-top-color: $sidebar-dark;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .form-card {
+    background: $card-bg;
+    border-radius: $radius;
+    border: 1px solid $border-color;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    padding: 2.5rem;
+    width: 100%;
+    box-sizing: border-box;
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: $text-main;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        input {
+          padding: 0.75rem 1rem;
+          font-size: 0.95rem;
+          border: 1px solid $border-color;
+          border-radius: 8px;
+          background: #fff;
+          color: $text-main;
+          transition: $transition;
+
+          &:focus {
+            outline: none;
+            border-color: $sidebar-dark;
+            box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.1);
+          }
+
+          &::placeholder {
+            color: $text-muted;
+          }
+        }
+
+        .error-text {
+          font-size: 0.75rem;
+          color: #ef4444;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid $border-color;
+
+      .btn-cancel {
+        background: transparent;
+        border: 1px solid $border-color;
+        color: $text-muted;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: $transition;
+
+        &:hover {
+          background: #f1f5f9;
+          color: $text-main;
+        }
+      }
+
+      .btn-submit {
+        // Botón principal alineado con el tono oscuro del Sidebar
+        background: $sidebar-dark;
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: $transition;
+
+        &:hover:not(:disabled) {
+          background: $sidebar-dark-hover;
+        }
+
+        &:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

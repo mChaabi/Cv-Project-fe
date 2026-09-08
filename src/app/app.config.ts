@@ -1,14 +1,19 @@
-import { ApplicationConfig, provideZoneChangeDetection, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
-import { provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZonelessChangeDetection(), 
-    provideRouter(routes), 
-    provideClientHydration(),
-    provideHttpClient()
+    provideRouter(routes),
+    provideHttpClient(withFetch()),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        prefix: './i18n/',  // ✅ plus de "assets/" — public/ devient la racine
+        suffix: '.json'
+      })
+    })
   ]
 };

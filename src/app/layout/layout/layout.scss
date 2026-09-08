@@ -1,4 +1,4 @@
-// layout.scss — tokens du design
+// layout.scss — Estructura principal optimizada
 :host {
   --ink: #1B1F27;
   --slate: #232A35;
@@ -9,103 +9,39 @@
 
   --font-serif: 'Source Serif Pro', Georgia, serif;
   --font-sans: 'Inter', system-ui, sans-serif;
+  
+  display: block;
+  min-height: 100vh;
 }
 
 .app-shell {
   display: flex;
   min-height: 100vh;
+  width: 100%;
   background: var(--paper);
   font-family: var(--font-sans);
   color: var(--ink);
-}
+  overflow-x: hidden;
 
-.sidebar {
-  width: 260px;
-  background: var(--slate);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 32px 20px;
-}
-
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 40px;
-
-  .brand-mark {
-    width: 36px;
-    height: 36px;
-    border: 1px solid rgba(255,255,255,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-serif);
-    font-size: 15px;
-    letter-spacing: 0.02em;
+  // Forzamos que la sidebar sea fija a la izquierda sin dejar huecos
+  app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
   }
-
-  .brand-name {
-    display: block;
-    font-family: var(--font-serif);
-    font-size: 16px;
-    line-height: 1.2;
-  }
-
-  .brand-tagline {
-    display: block;
-    font-size: 11px;
-    color: rgba(255,255,255,0.5);
-  }
-}
-
-.sidebar-nav {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-
-  .nav-section {
-    font-size: 11px;
-    color: rgba(255,255,255,0.4);
-    margin: 20px 0 8px;
-    letter-spacing: 0.03em;
-  }
-
-  .nav-item {
-    padding: 9px 12px;
-    border-radius: 4px;
-    font-size: 14px;
-    color: rgba(255,255,255,0.75);
-    cursor: pointer;
-    transition: background 0.15s ease;
-
-    &:hover { background: rgba(255,255,255,0.06); }
-
-    &.active {
-      background: var(--accent);
-      color: white;
-    }
-  }
-}
-
-.logout-btn {
-  background: none;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.8);
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-
-  &:hover { border-color: var(--accent); color: white; }
 }
 
 .content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  background: var(--paper);
+  // Margen izquierdo exacto que coincide con el ancho de la sidebar para evitar espacios vacíos
+  margin-left: 260px; 
+  transition: margin-left 0.3s ease;
 }
 
 .topbar {
@@ -125,14 +61,23 @@
     background: var(--paper);
   }
 
-  .user-name { font-size: 13px; font-weight: 600; }
-  .user-role { font-size: 12px; color: var(--gray); margin-left: 6px; }
+  .user-name { 
+    font-size: 13px; 
+    font-weight: 600; 
+  }
+  .user-role { 
+    font-size: 12px; 
+    color: var(--gray); 
+    margin-left: 6px; 
+  }
 }
 
 .page-content {
+  flex: 1;
   padding: 40px;
 }
 
+// layout.scss — Tokens del diseño con soporte translúcido / glassmorphism
 :host {
   --ink: #1B1F27;
   --slate: #232A35;
@@ -140,26 +85,55 @@
   --accent: #6B2737;
   --gray: #8A8F98;
   --border: rgba(27, 31, 39, 0.1);
+  --content-bg: rgba(255, 255, 255, 0.65); // Fondo translúcido para tarjetas/contenedores
+
   --font-serif: 'Source Serif Pro', Georgia, serif;
   --font-sans: 'Inter', system-ui, sans-serif;
+  
+  display: block;
+  min-height: 100vh;
 }
 
 .app-shell {
   display: flex;
   min-height: 100vh;
+  width: 100%;
   background: var(--paper);
+  font-family: var(--font-sans);
+  color: var(--ink);
+  overflow-x: hidden;
+
+  // Sidebar fija a la izquierda
+  app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+  }
 }
 
 .content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 260px; // largeur de la sidebar, fixe en position
+  min-width: 0;
+  background: var(--paper);
+  margin-left: 260px; 
+  transition: margin-left 0.3s ease;
 }
 
 .page-content {
   flex: 1;
   padding: 40px;
-  font-family: var(--font-sans);
-  color: var(--ink);
+
+  // Aplicamos un efecto translúcido elegante a los contenedores internos de las páginas
+  > * {
+    background: var(--content-bg) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+  }
 }

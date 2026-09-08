@@ -1,33 +1,24 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { OffreEmploiService } from '../../services/offre-emploi';
 import { OffreEmploi } from '../../models/offre-emploi';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-offres-emploi',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule,TranslatePipe],
   templateUrl: './offres-emploi.html',
   styleUrls: ['./offres-emploi.scss']
 })
 export class OffresEmploiComponent implements OnInit {
   private offreService = inject(OffreEmploiService);
-  private fb = inject(FormBuilder);
+  private router = inject(Router);
 
   offres = signal<OffreEmploi[]>([]);
   isLoading = signal<boolean>(true);
-  showModal = signal<boolean>(false);
-  isSubmitting = signal<boolean>(false);
-
   filterStatut = signal<string>('ALL');
-
-  offreForm: FormGroup = this.fb.group({
-    titre: ['', [Validators.required, Validators.minLength(3)]],
-    description: ['', [Validators.required]],
-    departement: ['', [Validators.required]],
-    statut: ['OUVERTE', [Validators.required]]
-  });
 
   ngOnInit(): void {
     this.loadOffres();
@@ -64,30 +55,8 @@ export class OffresEmploiComponent implements OnInit {
     }
   }
 
-  openModal(): void {
-    this.offreForm.reset({ statut: 'OUVERTE' });
-    this.showModal.set(true);
-  }
-
-  closeModal(): void {
-    this.showModal.set(false);
-  }
-
-  onSubmit(): void {
-    if (this.offreForm.invalid) return;
-
-    this.isSubmitting.set(true);
-    this.offreService.create(this.offreForm.value).subscribe({
-      next: (newOffre) => {
-        this.offres.update(list => [newOffre, ...list]);
-        this.closeModal();
-        this.isSubmitting.set(false);
-      },
-      error: (err) => {
-        console.error(err);
-        this.isSubmitting.set(false);
-      }
-    });
+  navigateToCreate(): void {
+    this.router.navigate(['/offres/nouvelle']);
   }
 
   deleteOffre(id: number): void {

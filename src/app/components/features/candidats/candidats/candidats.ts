@@ -1,34 +1,25 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CandidatService } from '../../services/candidat';
-import { Candidat } from '../../models/candidat';
+import { Router } from '@angular/router';
+import { CandidatService } from '../../../../services/candidat';
+import { Candidat } from '../../../../models/candidat';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-candidats',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule,TranslatePipe],
   templateUrl: './candidats.html',
   styleUrls: ['./candidats.scss']
 })
 export class CandidatsComponent implements OnInit {
   private candidatService = inject(CandidatService);
-  private fb = inject(FormBuilder);
+  private router = inject(Router);
 
   candidats = signal<Candidat[]>([]);
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
-  showModal = signal<boolean>(false);
-  isSubmitting = signal<boolean>(false);
-
   searchQuery = signal<string>('');
-
-  candidatForm: FormGroup = this.fb.group({
-    nom: ['', [Validators.required, Validators.minLength(2)]],
-    prenom: ['', [Validators.required, Validators.minLength(2)]],
-    email: ['', [Validators.required, Validators.email]],
-    telephone: ['', [Validators.required]]
-  });
 
   ngOnInit(): void {
     this.loadCandidats();
@@ -62,30 +53,14 @@ export class CandidatsComponent implements OnInit {
     }
   }
 
-  openModal(): void {
-    this.candidatForm.reset();
-    this.showModal.set(true);
+  viewCandidat(id: number): void {
+    // Redirige vers la page de détails (adaptez la route selon votre projet)
+    this.router.navigate(['/candidats/details', id]);
   }
 
-  closeModal(): void {
-    this.showModal.set(false);
-  }
-
-  onSubmit(): void {
-    if (this.candidatForm.invalid) return;
-
-    this.isSubmitting.set(true);
-    this.candidatService.create(this.candidatForm.value).subscribe({
-      next: (newCandidat) => {
-        this.candidats.update(list => [newCandidat, ...list]);
-        this.closeModal();
-        this.isSubmitting.set(false);
-      },
-      error: (err) => {
-        console.error(err);
-        this.isSubmitting.set(false);
-      }
-    });
+  editCandidat(id: number): void {
+    // Redirige vers la page d'édition (adaptez la route selon votre projet)
+    this.router.navigate(['/candidats/edit', id]);
   }
 
   deleteCandidat(id: number): void {

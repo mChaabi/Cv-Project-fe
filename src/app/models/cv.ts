@@ -1,15 +1,11 @@
-import { Candidat } from "./candidat";
-import { Competence } from "./competence";
-import { Experience } from "./experience";
-import { Formation } from "./formation";
 
 export interface Cv {
   id: number;
-  candidat: Candidat;
   titre: string;
   fichierUrl: string;
-  experiences?: Experience[];
-  formations?: Formation[];
-  competences?: Competence[];
-  dateUpload?: string;
+  candidat?: { id: number; nom: string; prenom: string ; email?:String; telephone?:String };
+  candidatNomComplet?: string;
+  experiences?: { poste: string; entreprise: string; description?: string }[];
+  formations?: { diplome: string; etablissement: string }[];
+  competences?: { id: number; libelle: string }[];
 }

@@ -2,11 +2,12 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CompetenceService } from '../../services/competence';
 import { Competence } from '../../models/competence';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-competences',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,TranslatePipe],
   templateUrl: './competences.html',
   styleUrls: ['./competences.scss']
 })

@@ -34,4 +34,17 @@ export class CvService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  // Dans cv.service.ts
+  uploadAndParse(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/upload`, formData);
+  }
+
+  analyzeCv(formData: FormData): Observable<any> {
+  return this.http.post(`${this.apiUrl}/analyze`, formData);
+}
+
+confirmCv(payload: any): Observable<Cv> {
+  return this.http.post<Cv>(`${this.apiUrl}/confirm`, payload);
+}
 }

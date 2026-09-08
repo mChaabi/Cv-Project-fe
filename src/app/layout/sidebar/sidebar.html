@@ -1,54 +1,91 @@
-<aside class="sidebar-container">
+<aside class="sidebar-container" [class.collapsed]="isCollapsed()">
+  <!-- Bouton de toggle -->
+  <button (click)="toggleSidebar()" class="toggle-btn" title="Réduire / Développer le menu">☰</button>
+
+  <!-- Brand Header -->
   <div class="sidebar-brand">
     <span class="brand-mark">CV</span>
     <div class="brand-text">
       <h2>CV Employee</h2>
-      <span>Portail Recrutement</span>
+      <span>{{ 'sidebar.brandSubtitle' | translate }}</span>
     </div>
   </div>
 
+  <!-- Navigation Links -->
   <nav class="sidebar-scroll">
-    <div class="menu-category">Principal</div>
+    @if (userRole === 'ADMIN' || userRole === 'RH') {
+    <div class="menu-category">{{ 'sidebar.catPrincipal' | translate }}</div>
 
-    <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
-      <span class="label">Tableau de bord</span>
+    <!-- Dashboard -->
+    <a class="nav-item" routerLink="/dashboard" routerLinkActive="active">
+      <span class="menu-icon">📊</span>
+      <span class="label">{{ 'sidebar.dashboard' | translate }}</span>
     </a>
 
-    <div class="menu-category">Gestion RH</div>
+    <div class="menu-category">{{ 'sidebar.catRh' | translate }}</div>
 
-    <a routerLink="/candidats" routerLinkActive="active" class="menu-item">
-      <span class="label">Candidats</span>
-      <span class="badge" *ngIf="totalCandidats() > 0">{{ totalCandidats() }}</span>
+    <!-- 1. Liste des Candidats -->
+    <a routerLink="/candidats" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="menu-item">
+      <span class="menu-icon">👥</span>
+      <span class="label">{{ 'sidebar.candidatesList' | translate }}</span>
+      @if (totalCandidats() > 0) {
+      <span class="badge">{{ totalCandidats() }}</span>
+      }
+    </a>
+
+    <!-- 2. Ajouter un Candidat -->
+    <a routerLink="/candidats/nouveau" routerLinkActive="active" class="menu-item">
+      <span class="menu-icon">➕</span>
+      <span class="label">{{ 'sidebar.addCandidate' | translate }}</span>
+    </a>
+
+    <a routerLink="/offres-emploi" routerLinkActive="active" class="menu-item">
+      <span class="menu-icon">💼</span>
+      <span class="label">{{ 'sidebar.jobOffers' | translate }}</span>
     </a>
 
     <a routerLink="/candidatures" routerLinkActive="active" class="menu-item">
-      <span class="label">Candidatures</span>
+      <span class="menu-icon">📄</span>
+      <span class="label">{{ 'sidebar.applications' | translate }}</span>
     </a>
+    }
 
-    <a routerLink="/offres" routerLinkActive="active" class="menu-item">
-      <span class="label">Offres d'emploi</span>
+    <!-- Pour le candidat uniquement -->
+    @if (userRole === 'CANDIDAT') {
+    <div class="menu-category">{{ 'sidebar.candidateSpace' | translate }}</div>
+
+    <a routerLink="/candidats" routerLinkActive="active" class="menu-item">
+      <span class="menu-icon">👤</span>
+      <span class="label">{{ 'sidebar.myRegistration' | translate }}</span>
     </a>
+    }
 
+    <!-- Accessible à tous ou adapté selon le rôle -->
     <a routerLink="/cvs" routerLinkActive="active" class="menu-item">
-      <span class="label">CVs &amp; Profils</span>
+      <span class="menu-icon">📁</span>
+      <span class="label">{{ userRole === 'CANDIDAT' ? ('sidebar.uploadCv' | translate) : ('sidebar.cvProfiles' | translate) }}</span>
     </a>
 
-    <div class="menu-category">Paramètres</div>
+    @if (userRole === 'ADMIN' || userRole === 'RH') {
+    <div class="menu-category">{{ 'sidebar.catSystem' | translate }}</div>
 
     <a routerLink="/competences" routerLinkActive="active" class="menu-item">
-      <span class="label">Compétences</span>
+      <span class="menu-icon">⚡</span>
+      <span class="label">{{ 'sidebar.skills' | translate }}</span>
     </a>
 
-    <a routerLink="/experiences" routerLinkActive="active" class="menu-item">
-      <span class="label">Expériences</span>
+    <a routerLink="/utilisateurs" routerLinkActive="active" class="menu-item">
+      <span class="menu-icon">🔒</span>
+      <span class="label">{{ 'sidebar.users' | translate }}</span>
     </a>
-
-    <a routerLink="/formations" routerLinkActive="active" class="menu-item">
-      <span class="label">Formations</span>
-    </a>
+    }
   </nav>
 
+  <!-- Footer avec profil ou déconnexion -->
   <div class="sidebar-footer">
-    <button class="logout-btn" (click)="onLogout()">Déconnexion</button>
+    <button class="logout-btn" (click)="onLogout()">
+      <span class="logout-icon">🚪</span>
+      <span class="label">{{ 'sidebar.logout' | translate }}</span>
+    </button>
   </div>
 </aside>

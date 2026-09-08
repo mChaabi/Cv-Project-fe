@@ -10,7 +10,7 @@ import { Utilisateur } from '../models/utilisateur';
 export class UtilisateurService {
   private apiUrl = 'http://localhost:8080/api/utilisateurs';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAll(): Observable<Utilisateur[]> {
     return this.http.get<Utilisateur[]>(this.apiUrl);
@@ -28,6 +28,10 @@ export class UtilisateurService {
     return this.http.put<Utilisateur>(`${this.apiUrl}/${id}`, utilisateur);
   }
 
+login(email: string, password: string): Observable<any> {
+    // Apunta a /api/auth/login en lugar de /api/utilisateurs/login
+    return this.http.post<any>('http://localhost:8080/api/auth/login', { email, password });
+  }
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

@@ -1,23 +1,21 @@
-// guards/auth-guard.ts
-import { inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const platformId = inject(PLATFORM_ID);
 
-  // ✅ côté serveur (SSR), on ne peut pas vérifier localStorage : on laisse passer,
-  // le vrai contrôle se refera côté navigateur après hydratation
-  if (!isPlatformBrowser(platformId)) {
-    return true;
+  // Vérifie si on est dans le navigateur (évite l'erreur SSR)
+  if (isPlatformBrowser(platformId)) {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      return true;
+    }
   }
 
-  const currentUser = localStorage.getItem('currentUser');
-  if (currentUser) {
-    return true;
-  }
-
-  router.navigate(['/login']);
+  // Si pas connecté ou si on est en SSR, redirige vers /auth
+  router.navigate(['/auth']);
   return false;
 };

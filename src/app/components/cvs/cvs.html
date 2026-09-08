@@ -1,172 +1,134 @@
 <div class="cvs-container">
-  <!-- Actions Header -->
-  <div class="action-bar">
-    <h2>Gestion des CVs</h2>
-    <button class="btn-primary" (click)="openModal()">
-      + Nouveau CV
-    </button>
-  </div>
-
-  <!-- List Grid -->
-  @if (isLoading()) {
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>Chargement des CVs...</p>
+  <header class="page-header">
+    <div>
+      <h1>{{ 'CV_LIST.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'CV_LIST.SUBTITLE' | translate }}</p>
     </div>
+    <!-- Redirection vers le composant de téléchargement -->
+    <button class="btn-primary" (click)="navigateToUpload()">{{ 'CV_LIST.NEW_CV_BTN' | translate }}</button>
+  </header>
+
+  @if (isLoading()) {
+    <div class="loading-state">{{ 'CV_LIST.LOADING' | translate }}</div>
+  } @else if (groupedCvs().length === 0) {
+    <div class="empty-state">{{ 'CV_LIST.EMPTY' | translate }}</div>
   } @else {
-    @if (cvs().length > 0) {
-      <div class="cvs-grid">
-        @for (cv of cvs(); track cv.id) {
-          <div class="cv-card">
-            <div class="card-header">
-              <span class="candidat-name">👤 {{ cv.candidat?.nom }} {{ cv.candidat?.prenom }}</span>
-              <button class="btn-icon" (click)="deleteCv(cv.id)" title="Supprimer">🗑️</button>
+    <div class="candidate-groups">
+      @for (group of groupedCvs(); track group.candidatId) {
+        <section class="candidate-group">
+          <div class="candidate-header">
+            <div class="candidate-avatar">{{ group.initials }}</div>
+            <div>
+              <h2>{{ group.candidatNomComplet }}</h2>
+              <span class="cv-count">{{ group.cvs.length }} CV{{ group.cvs.length > 1 ? 's' : '' }}</span>
             </div>
+          </div>
 
-            <h3 class="cv-title">{{ cv.titre }}</h3>
+          <div class="cv-cards">
+            @for (cv of group.cvs; track cv.id) {
+              <div class="cv-card">
+                <div class="cv-card-header">
+                  <h3>{{ cv.titre }}</h3>
+                  <button class="btn-icon" (click)="deleteCv(cv.id)">{{ 'CV_LIST.DELETE' | translate }}</button>
+                </div>
 
-            <!-- Tags Compétences -->
-            @if (cv.competences && cv.competences.length > 0) {
-              <div class="competences-list">
-                @for (comp of cv.competences; track comp.id) {
-                  <span class="skill-chip">{{ comp.libelle }}</span>
-                }
+                <div class="cv-meta">
+                  <span>{{ cv.experiences?.length ?? 0 }} {{ 'CV_LIST.EXPERIENCE_COUNT' | translate }}</span>
+                  <span class="divider-dot"></span>
+                  <span>{{ cv.formations?.length ?? 0 }} {{ 'CV_LIST.FORMATION_COUNT' | translate }}</span>
+                </div>
+
+                <div class="competence-tags">
+                  @for (comp of cv.competences ?? []; track comp.id) {
+                    <span class="tag">{{ comp.libelle }}</span>
+                  }
+                </div>
+
+                <div class="cv-card-actions">
+                  <button class="btn-detail" (click)="openDetailModal(cv)">{{ 'CV_LIST.DETAILS_BTN' | translate }}</button>
+                  <a [href]="getFileUrl(cv)" target="_blank" class="download-link">
+                    <span class="download-icon"></span>
+                    {{ 'CV_LIST.ORIGINAL_FILE' | translate }}
+                  </a>
+                </div>
               </div>
             }
-
-            <div class="details-section">
-              <small>💼 {{ cv.experiences?.length || 0 }} expériences</small>
-              <small>🎓 {{ cv.formations?.length || 0 }} formations</small>
-            </div>
-
-            <div class="card-footer">
-              <a [href]="cv.fichierUrl" target="_blank" class="btn-download">
-                📄 Télécharger le CV
-              </a>
-            </div>
           </div>
-        }
-      </div>
-    } @else {
-      <div class="empty-state">
-        <p>Aucun CV enregistré.</p>
-      </div>
-    }
+        </section>
+      }
+    </div>
   }
 
-  <!-- Modal Complexe (Création CV) -->
-  @if (showModal()) {
-    <div class="modal-backdrop" (click)="closeModal()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
+  <!-- Modale de détail d'un CV -->
+  @if (selectedCvDetail()) {
+    <div class="modal-backdrop" (click)="closeDetailModal()">
+      <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>Nouveau CV & Parcours</h3>
-          <button class="btn-close" (click)="closeModal()">×</button>
+          <h3>{{ selectedCvDetail()!.titre }}</h3>
+          <button class="btn-close" (click)="closeDetailModal()">×</button>
         </div>
 
-        <form [formGroup]="cvForm" (ngSubmit)="onSubmit()">
-          <div class="form-section">
-            <h4>Informations Générales</h4>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Candidat</label>
-                <select formControlName="candidatId">
-                  <option value="" disabled>Sélectionner un candidat</option>
-                  @for (c of candidats(); track c.id) {
-                    <option [value]="c.id">{{ c.nom }} {{ c.prenom }}</option>
-                  }
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label>Titre du CV</label>
-                <input type="text" formControlName="titre" placeholder="Ex: Développeur Angular Senior" />
+        <div class="detail-body">
+          <section class="detail-section">
+            <div class="candidate-summary">
+              <div class="candidate-avatar-lg">{{ getInitials(selectedCvDetail()!) }}</div>
+              <div>
+                <h4>{{ selectedCvDetail()!.candidat?.prenom }} {{ selectedCvDetail()!.candidat?.nom }}</h4>
+                <p class="candidate-contact">
+                  {{ selectedCvDetail()!.candidat?.email }}
+                  @if (selectedCvDetail()!.candidat?.telephone) { · {{ selectedCvDetail()!.candidat?.telephone }} }
+                </p>
               </div>
             </div>
+          </section>
 
-            <!-- Upload File -->
-            <div class="form-group full-width">
-              <label>Fichier du CV (PDF/DOCX)</label>
-              <div class="file-drop-zone">
-                <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx" id="fileInput" hidden />
-                <label for="fileInput" class="file-label">
-                  📁 {{ selectedFileName() || 'Cliquer pour choisir un fichier' }}
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section Compétences -->
-          <div class="form-section">
-            <h4>Compétences</h4>
-            <div class="chips-selector">
-              @for (comp of competences(); track comp.id) {
-                <button 
-                  type="button" 
-                  class="chip-btn" 
-                  [class.active]="isCompetenceSelected(comp.id)"
-                  (click)="toggleCompetence(comp.id)">
-                  {{ comp.libelle }}
-                </button>
+          <section class="detail-section">
+            <h5 class="section-title">{{ 'CV_MODAL.SKILLS' | translate }}</h5>
+            <div class="competence-tags">
+              @for (comp of selectedCvDetail()!.competences ?? []; track comp.id) {
+                <span class="tag">{{ comp.libelle }}</span>
+              } @empty {
+                <p class="empty-hint">{{ 'CV_MODAL.NO_SKILLS' | translate }}</p>
               }
             </div>
-          </div>
+          </section>
 
-          <!-- Section Expériences Imbriquées -->
-          <div class="form-section">
-            <div class="section-title-action">
-              <h4>Expériences</h4>
-              <button type="button" class="btn-small" (click)="addExperience()">+ Ajouter</button>
-            </div>
-
-            <div formArrayName="experiences">
-              @for (exp of experiencesArray.controls; track $index; let i = $index) {
-                <div [formGroupName]="i" class="nested-group">
-                  <div class="group-header">
-                    <span>Expérience #{{ i + 1 }}</span>
-                    <button type="button" class="btn-text-danger" (click)="removeExperience(i)">Supprimer</button>
-                  </div>
-                  <div class="form-grid">
-                    <input type="text" formControlName="poste" placeholder="Poste" />
-                    <input type="text" formControlName="entreprise" placeholder="Entreprise" />
-                    <input type="date" formControlName="dateDebut" />
-                    <input type="date" formControlName="dateFin" />
-                  </div>
+          <section class="detail-section">
+            <h5 class="section-title">{{ 'CV_MODAL.EXPERIENCES' | translate }}</h5>
+            @for (exp of selectedCvDetail()!.experiences ?? []; track exp.poste) {
+              <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <strong>{{ exp.poste }}</strong>
+                  <span class="timeline-org">{{ exp.entreprise }}</span>
+                  <p class="timeline-desc">{{ exp.description }}</p>
                 </div>
-              }
-            </div>
-          </div>
+              </div>
+            } @empty {
+              <p class="empty-hint">{{ 'CV_MODAL.NO_EXPERIENCES' | translate }}</p>
+            }
+          </section>
 
-          <!-- Section Formations Imbriquées -->
-          <div class="form-section">
-            <div class="section-title-action">
-              <h4>Formations</h4>
-              <button type="button" class="btn-small" (click)="addFormation()">+ Ajouter</button>
-            </div>
-
-            <div formArrayName="formations">
-              @for (form of formationsArray.controls; track $index; let i = $index) {
-                <div [formGroupName]="i" class="nested-group">
-                  <div class="group-header">
-                    <span>Formation #{{ i + 1 }}</span>
-                    <button type="button" class="btn-text-danger" (click)="removeFormation(i)">Supprimer</button>
-                  </div>
-                  <div class="form-grid">
-                    <input type="text" formControlName="diplome" placeholder="Diplôme" />
-                    <input type="text" formControlName="etablissement" placeholder="Établissement" />
-                    <input type="number" formControlName="anneeObtention" placeholder="Année" />
-                  </div>
+          <section class="detail-section">
+            <h5 class="section-title">{{ 'CV_MODAL.FORMATIONS' | translate }}</h5>
+            @for (form of selectedCvDetail()!.formations ?? []; track form.diplome) {
+              <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <strong>{{ form.diplome }}</strong>
+                  <span class="timeline-org">{{ form.etablissement }}</span>
                 </div>
-              }
-            </div>
-          </div>
+              </div>
+            } @empty {
+              <p class="empty-hint">{{ 'CV_MODAL.NO_FORMATIONS' | translate }}</p>
+            }
+          </section>
+        </div>
 
-          <div class="modal-footer">
-            <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
-            <button type="submit" class="btn-primary" [disabled]="cvForm.invalid || isSubmitting()">
-              {{ isSubmitting() ? 'Enregistrement...' : 'Créer le CV' }}
-            </button>
-          </div>
-        </form>
+        <div class="modal-footer">
+          <a [href]="getFileUrl(selectedCvDetail()!)" target="_blank" class="btn-secondary">{{ 'CV_LIST.ORIGINAL_FILE' | translate }}</a>
+          <button class="btn-primary" (click)="closeDetailModal()">{{ 'CV_MODAL.CLOSE' | translate }}</button>
+        </div>
       </div>
     </div>
   }

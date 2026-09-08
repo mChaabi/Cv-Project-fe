@@ -9,13 +9,14 @@ import { CandidatureService } from '../../services/candidature';
 import { Competence } from '../../models/competence';
 import { Experience } from '../../models/experience';
 import { Formation } from '../../models/formation';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
@@ -25,6 +26,7 @@ export class DashboardComponent implements OnInit {
   private experienceService = inject(ExperienceService);
   private formationService = inject(FormationService);
   private candidatureService = inject(CandidatureService);
+  private translate = inject(TranslateService);
 
   @ViewChild('competenceCanvas') competenceCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('experienceCanvas') experienceCanvas!: ElementRef<HTMLCanvasElement>;
@@ -133,7 +135,7 @@ export class DashboardComponent implements OnInit {
     this.experienceChart = new Chart(this.experienceCanvas.nativeElement, {
       type: 'bar',
       data: {
-        labels: ['Total Enregistré'],
+        labels: [this.translate.instant('dashboard.totalRecorded')],
         datasets: [
           {
             label: 'Expériences',

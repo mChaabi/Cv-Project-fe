@@ -1,0 +1,63 @@
+<div class="edit-container">
+  <div class="top-bar">
+    <button class="btn-back" (click)="goBack()">
+      ← {{ 'candidatEdit.cancel' | translate }}
+    </button>
+    <h1>{{ 'candidatEdit.title' | translate }}</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>{{ 'candidatEdit.loading' | translate }}</p>
+    </div>
+  } @else {
+    <div class="form-card">
+      <form [formGroup]="candidatForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="nom">{{ 'candidatEdit.nom' | translate }}</label>
+            <input id="nom" type="text" formControlName="nom" [placeholder]="'candidatEdit.nomPlaceholder' | translate" />
+            @if (candidatForm.get('nom')?.touched && candidatForm.get('nom')?.invalid) {
+              <small class="error-text">{{ 'candidatEdit.nomError' | translate }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="prenom">{{ 'candidatEdit.prenom' | translate }}</label>
+            <input id="prenom" type="text" formControlName="prenom" [placeholder]="'candidatEdit.prenomPlaceholder' | translate" />
+            @if (candidatForm.get('prenom')?.touched && candidatForm.get('prenom')?.invalid) {
+              <small class="error-text">{{ 'candidatEdit.prenomError' | translate }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="email">{{ 'candidatEdit.email' | translate }}</label>
+            <input id="email" type="email" formControlName="email" [placeholder]="'candidatEdit.emailPlaceholder' | translate" />
+            @if (candidatForm.get('email')?.touched && candidatForm.get('email')?.invalid) {
+              <small class="error-text">{{ 'candidatEdit.emailError' | translate }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="telephone">{{ 'candidatEdit.telephone' | translate }}</label>
+            <input id="telephone" type="text" formControlName="telephone" [placeholder]="'candidatEdit.telephonePlaceholder' | translate" />
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="goBack()">{{ 'candidatEdit.cancel' | translate }}</button>
+          <button type="submit" class="btn-submit" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <span>{{ 'candidatEdit.saving' | translate }}</span>
+            } @else {
+              <span>{{ 'candidatEdit.update' | translate }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</div>

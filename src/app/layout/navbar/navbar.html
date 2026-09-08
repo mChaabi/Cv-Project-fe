@@ -1,22 +1,35 @@
-<header class="navbar-container">
-  <input type="text" class="search-input" placeholder="Rechercher un candidat, une offre..." />
+<header class="navbar-container" [class.dark-theme]="isDarkTheme">
+  <!-- Input con placeholder traducido -->
+  <input type="text" class="search-input" [placeholder]="'nav.search' | translate" />
 
   <div class="navbar-actions">
-    <button class="action-btn">FR</button>
-    <button class="action-btn">Thème</button>
+    <!-- Sélecteur de langue propre -->
+    <select class="language-select" [value]="currentLang" (change)="onLanguageChange($event)">
+      <option value="fr">🇫🇷 FR</option>
+      <option value="en">🇬🇧 EN</option>
+      <option value="es">🇪🇸 ES</option>
+      <option value="ar">🇲🇦 AR</option>
+    </select>
+    
+    <!-- Bouton Thème interactif -->
+    <button class="action-btn" (click)="toggleTheme()" title="Basculer le thème">
+      {{ isDarkTheme ? '☀️ ' + ('nav.clear' | translate) : '🌙 ' + ('nav.theme' | translate) }}
+    </button>
 
-    <button class="action-btn has-badge">
-      Alertes
+    <!-- Botón de Notificaciones / Alertas traducido -->
+    <button class="action-btn has-badge" title="Notifications">
+      {{ 'nav.alerts' | translate }}
       <span class="badge-dot"></span>
     </button>
 
     <div class="divider"></div>
 
     <div class="user-profile">
-      <div class="avatar">MC</div>
+      <!-- Avatar dynamique généré à partir des initiales -->
+      <div class="avatar">{{ userInitials }}</div>
       <div class="user-info">
-        <span class="user-name">Mohamed Chaabi</span>
-        <span class="user-role">Administrateur RH</span>
+        <span class="user-name">{{ userName }}</span>
+        <span class="user-role">{{ userRoleDisplay }}</span>
       </div>
     </div>
   </div>

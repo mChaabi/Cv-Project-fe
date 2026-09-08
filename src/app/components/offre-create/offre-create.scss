@@ -1,0 +1,130 @@
+$primary-blue: #0284c7;
+$primary-hover: #0369a1;
+$bg-main: #f8fafc;
+$bg-card: #ffffff;
+$border-color: #e2e8f0;
+$text-primary: #0f172a;
+$text-muted: #64748b;
+$danger-red: #ef4444;
+
+.create-offre-container {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+  font-family: 'Inter', system-ui, sans-serif;
+
+  .form-card {
+    background: $bg-card;
+    border-radius: 16px;
+    border: 1px solid $border-color;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    padding: 2.5rem;
+
+    .form-header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid $border-color;
+      padding-bottom: 1.25rem;
+
+      h2 {
+        margin: 0 0 6px;
+        color: $text-primary;
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      p {
+        margin: 0;
+        color: $text-muted;
+        font-size: 14px;
+      }
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+
+      .full-width {
+        grid-column: span 2;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label {
+          font-size: 13px;
+          font-weight: 600;
+          color: $text-primary;
+
+          .required {
+            color: $danger-red;
+          }
+        }
+
+        input, select, textarea {
+          padding: 0.75rem 1rem;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          font-size: 14px;
+          outline: none;
+          background: #fff;
+          transition: border-color 0.2s, box-shadow 0.2s;
+
+          &:focus {
+            border-color: $primary-blue;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+          }
+        }
+
+        textarea {
+          resize: vertical;
+        }
+
+        .error-hint {
+          font-size: 12px;
+          color: $danger-red;
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      border-top: 1px solid $border-color;
+      padding-top: 1.5rem;
+
+      .btn-primary {
+        background: $primary-blue;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover { background: $primary-hover; }
+        &:disabled { opacity: 0.6; cursor: not-allowed; }
+      }
+
+      .btn-secondary {
+        background: #f1f5f9;
+        color: $text-primary;
+        border: 1px solid $border-color;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover { background: #e2e8f0; }
+      }
+    }
+  }
+}

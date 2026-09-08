@@ -9,11 +9,12 @@ import { Candidature, StatutCandidature } from '../../models/candidature';
 import { Candidat } from '../../models/candidat';
 import { OffreEmploi } from '../../models/offre-emploi';
 import { Cv } from '../../models/cv';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-candidatures',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './candidatures.html',
   styleUrls: ['./candidatures.scss']
 })
@@ -79,6 +80,17 @@ export class CandidaturesComponent implements OnInit {
     } else {
       this.cvsCandidat.set([]);
     }
+  }
+
+  getStatutLabel(statut: string): string {
+    const map: Record<string, string> = {
+      RECUE: 'candidatures.statutRecue',
+      PRESELECTIONNEE: 'candidatures.statutPreselectionnee',
+      ENTRETIEN: 'candidatures.statutEntretien',
+      ACCEPTEE: 'candidatures.statutAcceptee',
+      REFUSEE: 'candidatures.statutRefusee'
+    };
+    return map[statut] ?? statut;
   }
 
   onFilterChange(event: Event): void {

@@ -4,6 +4,8 @@
   --gray: #8A8F98;
   --border: rgba(27, 31, 39, 0.14);
   --font-sans: 'Inter', system-ui, sans-serif;
+  --navbar-bg: #ffffff;
+  --search-bg: #F5F3EF;
 }
 
 .navbar-container {
@@ -12,9 +14,19 @@
   justify-content: space-between;
   padding: 20px 40px;
   border-bottom: 1px solid var(--border);
-  background: white;
+  background: var(--navbar-bg);
   font-family: var(--font-sans);
   gap: 24px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+
+  // Support du mode sombre global si activé
+  &.dark-theme {
+    --navbar-bg: #232A35;
+    --ink: #ffffff;
+    --search-bg: rgba(255, 255, 255, 0.08);
+    --border: rgba(255, 255, 255, 0.1);
+    --gray: rgba(255, 255, 255, 0.6);
+  }
 }
 
 .search-input {
@@ -24,19 +36,25 @@
   border-radius: 4px;
   padding: 8px 14px;
   font-size: 13px;
-  background: #F5F3EF;
+  background: var(--search-bg);
+  color: var(--ink);
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: var(--gray);
+  }
 }
 
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 10px; // ✅ espace explicite entre chaque bouton
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .action-btn {
   position: relative;
-  background: white;              // ✅ fond plein, pas transparent — se détache du navbar
+  background: var(--navbar-bg);
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 7px 14px;
@@ -44,17 +62,17 @@
   font-family: var(--font-sans);
   color: var(--ink);
   cursor: pointer;
-  white-space: nowrap;            // ✅ empêche le texte de se replier sur lui-même
+  white-space: nowrap;
   transition: border-color 0.15s ease, background 0.15s ease;
 
   &:hover {
     border-color: var(--accent);
-    background: #FAF8F6;
+    background: rgba(107, 39, 55, 0.04);
   }
 }
 
 .has-badge {
-  padding-right: 22px; // ✅ laisse la place au point sans chevaucher "Alertes"
+  padding-right: 22px;
 }
 
 .badge-dot {
@@ -83,7 +101,7 @@
     height: 34px;
     min-width: 34px;
     border-radius: 50%;
-    background: var(--ink);
+    background: var(--accent);
     color: white;
     display: flex;
     align-items: center;
@@ -99,10 +117,32 @@
     white-space: nowrap;
   }
 
-  .user-name { font-size: 13px; font-weight: 600; color: var(--ink); }
-  .user-role { font-size: 12px; color: var(--gray); }
+  .user-name { 
+    font-size: 13px; 
+    font-weight: 600; 
+    color: var(--ink); 
+  }
+  .user-role { 
+    font-size: 12px; 
+    color: var(--gray); 
+  }
 }
 
 @media (max-width: 1100px) {
   .search-input { max-width: 220px; }
+}
+.language-select {
+  background: transparent;
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
 }

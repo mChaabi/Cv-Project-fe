@@ -13,3 +13,10 @@ body, html {
   color: #0f172a;
   -webkit-font-smoothing: antialiased;
 }
+
+body.glass-theme {
+  --paper: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+  --ink: #0f172a;
+  --border: rgba(255, 255, 255, 0.2);
+  --content-bg: rgba(255, 255, 255, 0.45); // Efecto cristal transparente para el contenido
+}

@@ -1,0 +1,61 @@
+<div class="form-container">
+  <div class="form-card">
+    <h2>{{ 'candidatForm.title' | translate }}</h2>
+    <p>{{ 'candidatForm.subtitle' | translate }}</p>
+
+    <form [formGroup]="candidatForm" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <!-- Nom -->
+        <div class="form-group">
+          <label>{{ 'candidatForm.nom' | translate }} *</label>
+          <input type="text" formControlName="nom" [placeholder]="'candidatForm.nomPlaceholder' | translate" />
+          @if (candidatForm.get('nom')?.touched && candidatForm.get('nom')?.invalid) {
+            <small class="error-text">{{ 'candidatForm.nomError' | translate }}</small>
+          }
+        </div>
+
+        <!-- Prénom -->
+        <div class="form-group">
+          <label>{{ 'candidatForm.prenom' | translate }} *</label>
+          <input type="text" formControlName="prenom" [placeholder]="'candidatForm.prenomPlaceholder' | translate" />
+          @if (candidatForm.get('prenom')?.touched && candidatForm.get('prenom')?.invalid) {
+            <small class="error-text">{{ 'candidatForm.prenomError' | translate }}</small>
+          }
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label>{{ 'candidatForm.email' | translate }} *</label>
+          <input type="email" formControlName="email" [placeholder]="'candidatForm.emailPlaceholder' | translate" />
+          @if (candidatForm.get('email')?.touched && candidatForm.get('email')?.invalid) {
+            <small class="error-text">{{ 'candidatForm.emailError' | translate }}</small>
+          }
+        </div>
+
+        <!-- Téléphone -->
+        <div class="form-group">
+          <label>{{ 'candidatForm.telephone' | translate }}</label>
+          <input type="text" formControlName="telephone" [placeholder]="'candidatForm.telephonePlaceholder' | translate" />
+        </div>
+
+        <!-- URL LinkedIn -->
+        <div class="form-group">
+          <label>{{ 'candidatForm.linkedin' | translate }}</label>
+          <input type="text" formControlName="linkedinUrl" [placeholder]="'candidatForm.linkedinPlaceholder' | translate" />
+        </div>
+
+        <!-- Date de Naissance -->
+        <div class="form-group">
+          <label>{{ 'candidatForm.dateNaissance' | translate }}</label>
+          <input type="date" formControlName="dateNaissance" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="candidatForm.invalid || isSubmitting()">
+          {{ isSubmitting() ? ('candidatForm.submitting' | translate) : ('candidatForm.submit' | translate) }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

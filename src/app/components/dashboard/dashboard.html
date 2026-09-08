@@ -1,38 +1,38 @@
 <div class="dashboard-container">
   <header class="page-header">
     <div>
-      <h1>Tableau de bord RH</h1>
-      <p class="subtitle">Statistiques calculées depuis la base de données</p>
+      <h1>{{ 'dashboard.title' | translate }}</h1>
+      <p class="subtitle">{{ 'dashboard.subtitle' | translate }}</p>
     </div>
-    <button class="btn-refresh" (click)="loadAllData()">Actualiser</button>
+    <button class="btn-refresh" (click)="loadAllData()">{{ 'dashboard.refresh' | translate }}</button>
   </header>
 
-  <div *ngIf="isLoading()" class="loading-state">Chargement des données...</div>
+  <div *ngIf="isLoading()" class="loading-state">{{ 'dashboard.loading' | translate }}</div>
 
   <div class="kpi-row">
     <div class="kpi">
       <span class="kpi-value">{{ totalCandidats() }}</span>
-      <span class="kpi-label">Candidats</span>
+      <span class="kpi-label">{{ 'dashboard.candidates' | translate }}</span>
     </div>
     <div class="kpi">
       <span class="kpi-value">{{ totalCandidatures() }}</span>
-      <span class="kpi-label">Candidatures</span>
+      <span class="kpi-label">{{ 'dashboard.applications' | translate }}</span>
     </div>
     <div class="kpi">
       <span class="kpi-value">{{ totalExperiences() }}</span>
-      <span class="kpi-label">Expériences</span>
+      <span class="kpi-label">{{ 'dashboard.experiences' | translate }}</span>
     </div>
     <div class="kpi">
       <span class="kpi-value">{{ totalFormations() }}</span>
-      <span class="kpi-label">Formations</span>
+      <span class="kpi-label">{{ 'dashboard.formations' | translate }}</span>
     </div>
   </div>
 
   <div class="charts-row">
     <div class="chart-panel">
       <div class="chart-header">
-        <h2>Répartition des compétences</h2>
-        <p>Calculé selon les compétences enregistrées</p>
+        <h2>{{ 'dashboard.skillsDistribution' | translate }}</h2>
+        <p>{{ 'dashboard.skillsSubtitle' | translate }}</p>
       </div>
       <div class="chart-canvas-wrap">
         <canvas #competenceCanvas></canvas>
@@ -41,8 +41,8 @@
 
     <div class="chart-panel">
       <div class="chart-header">
-        <h2>Expériences &amp; formations</h2>
-        <p>Volume total enregistré</p>
+        <h2>{{ 'dashboard.expFormations' | translate }}</h2>
+        <p>{{ 'dashboard.volumeSubtitle' | translate }}</p>
       </div>
       <div class="chart-canvas-wrap">
         <canvas #experienceCanvas></canvas>

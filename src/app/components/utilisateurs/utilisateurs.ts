@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UtilisateurService } from '../../services/utilisateur';
 import { Utilisateur, RoleUtilisateur } from '../../models/utilisateur';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-utilisateurs',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,TranslatePipe],
   templateUrl: './utilisateurs.html',
   styleUrls: ['./utilisateurs.scss']
 })

@@ -1,0 +1,51 @@
+<div class="consult-container">
+  <div class="top-bar">
+    <button class="btn-back" (click)="goBack()">
+      ← {{ 'candidatView.back' | translate }}
+    </button>
+    @if (candidat()) {
+      <button class="btn-primary-action" (click)="editCandidate()">
+        ✏️ {{ 'candidatView.editProfile' | translate }}
+      </button>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>{{ 'candidatView.loading' | translate }}</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="error-state">
+      <p>{{ errorMessage() }}</p>
+      <button class="btn-back" (click)="goBack()">{{ 'candidatView.backShort' | translate }}</button>
+    </div>
+  } @else if (candidat(); as c) {
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="avatar-large">
+          {{ c.nom?.[0] || 'C' }}{{ c.prenom?.[0] || 'A' }}
+        </div>
+        <div class="profile-titles">
+          <h1>{{ c.nom }} {{ c.prenom }}</h1>
+          <span class="badge-status">{{ 'candidatView.activeStatus' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">{{ 'candidatView.idLabel' | translate }}</span>
+          <span class="value">#{{ c.id }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'candidatView.emailLabel' | translate }}</span>
+          <span class="value">{{ c.email || ('candidatView.notProvided' | translate) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'candidatView.phoneLabel' | translate }}</span>
+          <span class="value">{{ c.telephone || ('candidatView.notProvided' | translate) }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>
