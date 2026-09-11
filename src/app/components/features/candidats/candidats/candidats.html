@@ -2,82 +2,132 @@
   <!-- Actions Header -->
   <div class="action-bar">
     <div class="search-box">
-      <input type="text" [placeholder]="'candidats.searchPlaceholder' | translate" [value]="searchQuery()" (input)="onSearch($event)" />
+      <input type="text" [placeholder]="'candidats.searchPlaceholder' | translate" [value]="searchQuery()"
+        (input)="onSearch($event)" />
     </div>
   </div>
 
   <!-- Table List -->
   @if (isLoading()) {
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>{{ 'candidats.loading' | translate }}</p>
-    </div>
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>{{ 'candidats.loading' | translate }}</p>
+  </div>
   } @else {
-    @if (candidats().length > 0) {
-      <div class="table-card">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>{{ 'candidats.colId' | translate }}</th>
-              <th>{{ 'candidats.colName' | translate }}</th>
-              <th>{{ 'candidats.colEmail' | translate }}</th>
-              <th>{{ 'candidats.colPhone' | translate }}</th>
-              <th class="text-right">{{ 'candidats.colActions' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Utilisation de paginatedCandidats() au lieu de candidats() -->
-            @for (c of paginatedCandidats(); track c.id) {
-              <tr>
-                <td>#{{ c.id }}</td>
-                <td class="font-bold">{{ c.nom }} {{ c.prenom }}</td>
-                <td>{{ c.email }}</td>
-                <td>{{ c.telephone || '-' }}</td>
-                <td class="text-right">
-                  <div class="action-buttons">
-                    <button class="btn-icon view" (click)="viewCandidat(c.id!)" [title]="'candidats.view' | translate">
-                      👁️
-                    </button>
-                    <button class="btn-icon edit" (click)="editCandidat(c.id!)" [title]="'candidats.edit' | translate">
-                      ✏️
-                    </button>
-                    <button class="btn-icon delete" (click)="deleteCandidat(c.id!)" [title]="'candidats.delete' | translate">
-                      🗑️
-                    </button>
-                  </div>
-                </td>
-              </tr>
+  @if (candidats().length > 0) {
+  <div class="table-card">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>{{ 'candidats.colId' | translate }}</th>
+          <th>{{ 'candidats.colName' | translate }}</th>
+          <th>{{ 'candidats.colEmail' | translate }}</th>
+          <th>{{ 'candidats.colPhone' | translate }}</th>
+          <th>Score Entretien</th>
+          <th class="text-right">{{ 'candidats.colActions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Utilisation de paginatedCandidats() au lieu de candidats() -->
+        @for (c of paginatedCandidats(); track c.id) {
+        <tr>
+          <td>#{{ c.id }}</td>
+          <td class="font-bold">{{ c.nom }} {{ c.prenom }}</td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.telephone || '-' }}</td>
+          <td>
+            @if (interviewScores()[c.id!] !== undefined && interviewScores()[c.id!] !== null) {
+            <span class="score-badge" [ngClass]="getScoreClass(interviewScores()[c.id!])">
+              {{ interviewScores()[c.id!] }}/100
+            </span>
+            } @else {
+            <span class="score-badge score-none">Pas encore passé</span>
             }
-          </tbody>
-        </table>
-
-        <!-- BARRE DE PAGINATION -->
-        <div class="pagination-bar">
-          <span class="pagination-info">
-            Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, candidats().length) }} sur {{ candidats().length }} candidats
-          </span>
-          <div class="pagination-controls">
-            <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
-              Précédent
-            </button>
-            
-            @for (page of totalPagesArray(); track page) {
-              <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
-                {{ page }}
+          </td>
+          <td class="text-right">
+            <div class="action-buttons">
+              <button class="btn-icon view" (click)="viewCandidat(c.id!)" [title]="'candidats.view' | translate">
+                👁️
               </button>
-            }
 
-            <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
-              Suivant
-            </button>
-          </div>
-        </div>
+              <!-- ═══ NOUVEAU : bouton transcript ═══ -->
+              <button class="btn-icon transcript" (click)="viewTranscript(c.id!)" title="Voir la transcription">
+                💬
+              </button>
 
+              <button class="btn-icon edit" (click)="editCandidat(c.id!)" [title]="'candidats.edit' | translate">
+                ✏️
+              </button>
+              <button class="btn-icon delete" (click)="deleteCandidat(c.id!)" [title]="'candidats.delete' | translate">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- BARRE DE PAGINATION -->
+    <div class="pagination-bar">
+      <span class="pagination-info">
+        Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, candidats().length)
+        }} sur {{ candidats().length }} candidats
+      </span>
+      <div class="pagination-controls">
+        <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
+          Précédent
+        </button>
+
+        @for (page of totalPagesArray(); track page) {
+        <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
+          {{ page }}
+        </button>
+        }
+
+        <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
+          Suivant
+        </button>
       </div>
-    } @else {
-      <div class="empty-state">
-        <p>{{ 'candidats.empty' | translate }}</p>
-      </div>
-    }
+    </div>
+
+  </div>
+  } @else {
+  <div class="empty-state">
+    <p>{{ 'candidats.empty' | translate }}</p>
+  </div>
   }
+  }
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- NOUVEAU : Modale de transcription (bulles de chat)          -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  @if (showTranscriptModal()) {
+  <div class="modal-backdrop" (click)="closeTranscript()">
+    <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>💬 Transcription de l'entretien</h3>
+        <button class="btn-close" (click)="closeTranscript()">×</button>
+      </div>
+
+      <div class="detail-body">
+        @if (transcriptLoading()) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Chargement de la transcription...</p>
+        </div>
+        } @else if (selectedTranscript().length > 0) {
+        <app-transcript-view [entries]="selectedTranscript()"></app-transcript-view>
+        } @else {
+        <p class="empty-hint">Aucune transcription disponible pour ce candidat.</p>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary" (click)="closeTranscript()">Fermer</button>
+      </div>
+    </div>
+  </div>
+  }
+
 </div>

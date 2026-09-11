@@ -1,0 +1,13 @@
+<div class="chat-window">
+  @if (entries.length === 0) {
+    <p class="empty-hint">Aucune transcription disponible.</p>
+  }
+  @for (entry of entries; track entry.timestamp) {
+    <div class="bubble-row" [class.candidat-row]="entry.role === 'candidat'">
+      <div class="avatar">{{ entry.role === 'ai' ? '🤖' : '👤' }}</div>
+      <div class="bubble" [class.bubble-ai]="entry.role === 'ai'" [class.bubble-candidat]="entry.role === 'candidat'">
+        {{ entry.text }}
+      </div>
+    </div>
+  }
+</div>

@@ -41,10 +41,17 @@ export class CvService {
   }
 
   analyzeCv(formData: FormData): Observable<any> {
-  return this.http.post(`${this.apiUrl}/analyze`, formData);
-}
+    return this.http.post(`${this.apiUrl}/analyze`, formData);
+  }
 
-confirmCv(payload: any): Observable<Cv> {
-  return this.http.post<Cv>(`${this.apiUrl}/confirm`, payload);
-}
+  confirmCv(payload: any): Observable<Cv> {
+    return this.http.post<Cv>(`${this.apiUrl}/confirm`, payload);
+  }
+
+  // Versión de la función adaptada para usarse sin eventos
+  private irAEntrevistaDirecto(cv: Cv): void {
+    const candidatId = cv.candidat?.id ?? (cv as any).candidatId;
+    const url = `http://localhost:8081/start?candidatId=${candidatId}&poste=${encodeURIComponent(cv.titre)}`;
+    window.location.href = url;
+  }
 }

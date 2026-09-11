@@ -163,7 +163,8 @@
     "EXPERIENCE_COUNT": "experiencia(s)",
     "FORMATION_COUNT": "formación(es)",
     "DETAILS_BTN": "Ver detalles",
-    "ORIGINAL_FILE": "Archivo original"
+    "ORIGINAL_FILE": "Archivo original",
+    "PRACTICE_INTERVIEW": "Practicar entrevista"
   },
   "CV_MODAL": {
     "SKILLS": "Habilidades",

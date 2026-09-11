@@ -4,7 +4,7 @@
       <select (change)="onFilterChange($event)">
         <option value="ALL">{{ 'candidatures.filterAll' | translate }}</option>
         @for (st of statutsList; track st) {
-          <option [value]="st">{{ getStatutLabel(st) | translate }}</option>
+        <option [value]="st">{{ getStatutLabel(st) | translate }}</option>
         }
       </select>
     </div>
@@ -14,161 +14,171 @@
   </div>
 
   @if (isLoading()) {
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>{{ 'candidatures.loading' | translate }}</p>
-    </div>
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>{{ 'candidatures.loading' | translate }}</p>
+  </div>
   } @else {
-    @if (candidatures().length > 0) {
-      <div class="table-wrapper">
-        <table class="candidatures-table">
-          <thead>
-            <tr>
-              <th>{{ 'candidatures.colCandidat' | translate }}</th>
-              <th>{{ 'candidatures.colOffre' | translate }}</th>
-              <th>{{ 'candidatures.colCv' | translate }}</th>
-              <th>{{ 'candidatures.colStatut' | translate }}</th>
-              <th>{{ 'candidatures.colComment' | translate }}</th>
-              <th class="text-right">{{ 'candidatures.colActions' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Utilisation de paginatedCandidatures() -->
-            @for (item of paginatedCandidatures(); track item.id) {
-              <tr>
-                <td>
-                  <div class="candidate-info">
-                    <span class="name">{{ item.candidat?.nom }} {{ item.candidat?.prenom }}</span>
-                    <small class="email">{{ item.candidat?.email }}</small>
-                  </div>
-                </td>
-                <td>
-                  <span class="offre-title">{{ item.offre?.titre }}</span>
-                </td>
-                <td>
-                  @if (item.cv?.fichierUrl) {
-                    <a [href]="item.cv?.fichierUrl" target="_blank" class="cv-link">{{ 'candidatures.viewCv' | translate }}</a>
-                  } @else {
-                    <span class="text-muted">-</span>
-                  }
-                </td>
-                <td>
-                  <select
-                    class="status-select"
-                    [attr.data-status]="item.statut"
-                    [value]="item.statut"
-                    (change)="updateStatutDirect(item, $any($event.target).value)">
-                    @for (st of statutsList; track st) {
-                      <option [value]="st">{{ getStatutLabel(st) | translate }}</option>
-                    }
-                  </select>
-                </td>
-                <td>
-                  <span class="comment-text" [title]="item.commentaireRH">
-                    {{ item.commentaireRH || '-' }}
-                  </span>
-                </td>
-                <td class="text-right">
-                  <button class="btn-icon" (click)="deleteCandidature(item.id)" [title]="'candidatures.delete' | translate">🗑️</button>
-                </td>
-              </tr>
+  @if (candidatures().length > 0) {
+  <div class="table-wrapper">
+    <table class="candidatures-table">
+      <thead>
+        <tr>
+          <th>{{ 'candidatures.colCandidat' | translate }}</th>
+          <th>{{ 'candidatures.colOffre' | translate }}</th>
+          <th>{{ 'candidatures.colCv' | translate }}</th>
+          <th>{{ 'candidatures.colStatut' | translate }}</th>
+          <th>{{ 'candidatures.colComment' | translate }}</th>
+          <th class="text-right">{{ 'candidatures.colActions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of paginatedCandidatures(); track item.id) {
+        <tr>
+          <!-- CANDIDATO -->
+          <td>
+            <div class="candidate-info">
+              <span class="name">{{ item.candidatNomComplet || '-' }}</span>
+            </div>
+          </td>
+
+          <!-- OFFRE -->
+          <td>
+            <span class="offre-title">{{ item.offreTitre || '-' }}</span>
+          </td>
+
+          <!-- CV -->
+          <td>
+            @if (item.cvId) {
+            <span class="cv-badge">CV #{{ item.cvId }}</span>
+            } @else {
+            <span class="text-muted">-</span>
             }
-          </tbody>
-        </table>
-      </div>
+          </td>
 
-      <!-- BARRE DE PAGINATION -->
-      <div class="pagination-bar">
-        <span class="pagination-info">
-          Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, candidatures().length) }} sur {{ candidatures().length }} candidatures
-        </span>
-        <div class="pagination-controls">
-          <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
-            Précédent
-          </button>
-          
-          @for (page of totalPagesArray(); track page) {
-            <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
-              {{ page }}
-            </button>
-          }
+          <!-- STATUT -->
+          <td>
+            <select class="status-select" [attr.data-status]="item.statut"
+              (change)="updateStatutDirect(item, $any($event.target).value)">
+              @for (st of statutsList; track st) {
+              <option [value]="st" [selected]="st === item.statut">{{ getStatutLabel(st) | translate }}</option>
+              }
+            </select>
+          </td>
 
-          <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
-            Suivant
-          </button>
-        </div>
-      </div>
+          <!-- COMMENTAIRE -->
+          <td>
+            <span class="comment-text" [title]="item.commentaireRH">
+              {{ item.commentaireRH || '-' }}
+            </span>
+          </td>
 
-    } @else {
-      <div class="empty-state">
-        <p>{{ 'candidatures.empty' | translate }}</p>
-      </div>
-    }
+          <!-- ACTIONS -->
+          <td class="text-right">
+            <button class="btn-icon" (click)="deleteCandidature(item.id!)"
+              [title]="'candidatures.delete' | translate">🗑️</button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BARRE DE PAGINATION -->
+  <div class="pagination-bar">
+    <span class="pagination-info">
+      Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize,
+      candidatures().length) }} sur {{ candidatures().length }} candidatures
+    </span>
+    <div class="pagination-controls">
+      <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
+        Précédent
+      </button>
+
+      @for (page of totalPagesArray(); track page) {
+      <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
+        {{ page }}
+      </button>
+      }
+
+      <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
+        Suivant
+      </button>
+    </div>
+  </div>
+
+  } @else {
+  <div class="empty-state">
+    <p>{{ 'candidatures.empty' | translate }}</p>
+  </div>
+  }
   }
 
   @if (showModal()) {
-    <div class="modal-backdrop" (click)="closeModal()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h3>{{ 'candidatureModal.title' | translate }}</h3>
-          <button class="btn-close" (click)="closeModal()">×</button>
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ 'candidatureModal.title' | translate }}</h3>
+        <button class="btn-close" (click)="closeModal()">×</button>
+      </div>
+
+      <form [formGroup]="candidatureForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>{{ 'candidatureModal.candidat' | translate }}</label>
+            <select formControlName="candidatId" (change)="onCandidatChange($event)">
+              <option value="" disabled>{{ 'candidatureModal.selectCandidat' | translate }}</option>
+              @for (c of candidats(); track c.id) {
+              <option [value]="c.id">{{ c.nom }} {{ c.prenom }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'candidatureModal.offre' | translate }}</label>
+            <select formControlName="offreId">
+              <option value="" disabled>{{ 'candidatureModal.selectOffre' | translate }}</option>
+              @for (o of offres(); track o.id) {
+              <option [value]="o.id">{{ o.titre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'candidatureModal.cv' | translate }}</label>
+            <select formControlName="cvId">
+              <option value="" disabled>{{ 'candidatureModal.selectCv' | translate }}</option>
+              @for (cv of cvsCandidat(); track cv.id) {
+              <option [value]="cv.id">{{ cv.titre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'candidatureModal.statutInitial' | translate }}</label>
+            <select formControlName="statut">
+              @for (st of statutsList; track st) {
+              <option [value]="st">{{ getStatutLabel(st) | translate }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label>{{ 'candidatureModal.comment' | translate }}</label>
+            <textarea formControlName="commentaireRH" rows="3"
+              [placeholder]="'candidatureModal.commentPlaceholder' | translate"></textarea>
+          </div>
         </div>
 
-        <form [formGroup]="candidatureForm" (ngSubmit)="onSubmit()">
-          <div class="form-grid">
-            <div class="form-group">
-              <label>{{ 'candidatureModal.candidat' | translate }}</label>
-              <select formControlName="candidatId" (change)="onCandidatChange($event)">
-                <option value="" disabled>{{ 'candidatureModal.selectCandidat' | translate }}</option>
-                @for (c of candidats(); track c.id) {
-                  <option [value]="c.id">{{ c.nom }} {{ c.prenom }}</option>
-                }
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>{{ 'candidatureModal.offre' | translate }}</label>
-              <select formControlName="offreId">
-                <option value="" disabled>{{ 'candidatureModal.selectOffre' | translate }}</option>
-                @for (o of offres(); track o.id) {
-                  <option [value]="o.id">{{ o.titre }}</option>
-                }
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>{{ 'candidatureModal.cv' | translate }}</label>
-              <select formControlName="cvId">
-                <option value="" disabled>{{ 'candidatureModal.selectCv' | translate }}</option>
-                @for (cv of cvsCandidat(); track cv.id) {
-                  <option [value]="cv.id">{{ cv.titre }}</option>
-                }
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>{{ 'candidatureModal.statutInitial' | translate }}</label>
-              <select formControlName="statut">
-                @for (st of statutsList; track st) {
-                  <option [value]="st">{{ getStatutLabel(st) | translate }}</option>
-                }
-              </select>
-            </div>
-
-            <div class="form-group full-width">
-              <label>{{ 'candidatureModal.comment' | translate }}</label>
-              <textarea formControlName="commentaireRH" rows="3" [placeholder]="'candidatureModal.commentPlaceholder' | translate"></textarea>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn-secondary" (click)="closeModal()">{{ 'candidatureModal.cancel' | translate }}</button>
-            <button type="submit" class="btn-primary" [disabled]="candidatureForm.invalid || isSubmitting()">
-              {{ isSubmitting() ? ('candidatureModal.saving' | translate) : ('candidatureModal.create' | translate) }}
-            </button>
-          </div>
-        </form>
-      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="closeModal()">{{ 'candidatureModal.cancel' | translate
+            }}</button>
+          <button type="submit" class="btn-primary" [disabled]="candidatureForm.invalid || isSubmitting()">
+            {{ isSubmitting() ? ('candidatureModal.saving' | translate) : ('candidatureModal.create' | translate) }}
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
   }
 </div>

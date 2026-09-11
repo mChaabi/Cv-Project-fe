@@ -539,3 +539,15 @@
     opacity: 1;
   }
 }
+
+.score-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-left: 8px;
+}
+.score-good   { background: #d4f8e8; color: #1a7f4b; }
+.score-medium { background: #fff3d4; color: #b8860b; }
+.score-bad    { background: #fddede; color: #c0392b; }
+.score-none   { background: #eee; color: #888; }

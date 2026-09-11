@@ -1,0 +1,41 @@
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  max-height: 500px;
+  overflow-y: auto;
+  background: #f0f2f5;
+  border-radius: 12px;
+}
+
+.bubble-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.candidat-row {
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  font-size: 1.4em;
+}
+
+.bubble {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.95em;
+  line-height: 1.4;
+}
+.bubble-ai {
+  background: #ffffff;
+  color: #333;
+  border-bottom-left-radius: 4px;
+}
+.bubble-candidat {
+  background: #6b2b5c; // couleur de ta charte (bordeaux)
+  color: white;
+  border-bottom-right-radius: 4px;
+}

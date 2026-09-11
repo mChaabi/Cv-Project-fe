@@ -154,16 +154,17 @@
   "candidatureModal.saving": "Saving...",
   "candidatureModal.create": "Create application",
   "CV_LIST": {
-    "TITLE": "CVs & Profiles",
+    "TITLE": "CVs and Profiles",
     "SUBTITLE": "Management and centralization of CVs",
     "NEW_CV_BTN": "+ New CV",
     "LOADING": "Loading CVs...",
-    "EMPTY": "No CVs registered yet.",
+    "EMPTY": "No CVs registered at the moment.",
     "DELETE": "Delete",
     "EXPERIENCE_COUNT": "experience(s)",
-    "FORMATION_COUNT": "education/training",
+    "FORMATION_COUNT": "education(s)",
     "DETAILS_BTN": "View details",
-    "ORIGINAL_FILE": "Original file"
+    "ORIGINAL_FILE": "Original file",
+    "PRACTICE_INTERVIEW": "Practice interview"
   },
   "CV_MODAL": {
     "SKILLS": "Skills",

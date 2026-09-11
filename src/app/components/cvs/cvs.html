@@ -47,6 +47,7 @@
 
                 <div class="cv-card-actions">
                   <button class="btn-detail" (click)="openDetailModal(cv)">{{ 'CV_LIST.DETAILS_BTN' | translate }}</button>
+                  <button class="btn-primary" (click)="irAEntrevista(cv)">{{ 'CV_LIST.PRACTICE_INTERVIEW' | translate }}</button>
                   <a [href]="getFileUrl(cv)" target="_blank" class="download-link">
                     <span class="download-icon"></span>
                     {{ 'CV_LIST.ORIGINAL_FILE' | translate }}
@@ -68,7 +69,7 @@
         <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
           Précédent
         </button>
-        
+
         @for (page of totalPagesArray(); track page) {
           <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
             {{ page }}
@@ -102,6 +103,13 @@
                   @if (selectedCvDetail()!.candidat?.telephone) { · {{ selectedCvDetail()!.candidat?.telephone }} }
                 </p>
               </div>
+
+              <!-- ═══ NOUVEAU : badge score entretien dans le résumé candidat ═══ -->
+              @if (interviewScore() !== null) {
+                <span class="score-badge" [ngClass]="getScoreClass(interviewScore())">
+                  {{ interviewScore() }}/100
+                </span>
+              }
             </div>
           </section>
 
@@ -146,6 +154,24 @@
               <p class="empty-hint">{{ 'CV_MODAL.NO_FORMATIONS' | translate }}</p>
             }
           </section>
+
+          <!-- ═══════════════════════════════════════════════════ -->
+          <!-- NOUVEAU : Transcription de l'entretien               -->
+          <!-- ═══════════════════════════════════════════════════ -->
+          <section class="detail-section">
+            <h5 class="section-title">💬 Transcription de l'entretien</h5>
+            @if (transcriptLoading()) {
+              <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Chargement...</p>
+              </div>
+            } @else if (selectedTranscript().length > 0) {
+              <app-transcript-view [entries]="selectedTranscript()"></app-transcript-view>
+            } @else {
+              <p class="empty-hint">Aucun entretien passé pour ce candidat.</p>
+            }
+          </section>
+
         </div>
 
         <div class="modal-footer">

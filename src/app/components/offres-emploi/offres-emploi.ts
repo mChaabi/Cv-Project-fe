@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { OffreEmploiService } from '../../services/offre-emploi';
 import { OffreEmploi } from '../../models/offre-emploi';
 import { TranslatePipe } from '@ngx-translate/core';
+import { SearchService } from '../../services/search';
 
 @Component({
   selector: 'app-offres-emploi',
@@ -15,6 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class OffresEmploiComponent implements OnInit {
   private offreService = inject(OffreEmploiService);
   private router = inject(Router);
+  private searchService = inject(SearchService);
 
   offres = signal<OffreEmploi[]>([]);
   isLoading = signal<boolean>(true);
@@ -91,6 +93,20 @@ export class OffresEmploiComponent implements OnInit {
   navigateToCreate(): void {
     this.router.navigate(['/offres/nouvelle']);
   }
+
+  // Filtrage automatique selon ce qu'on tape dans la Navbar
+  filteredOffres = computed(() => {
+    const query = this.searchService.searchTerm().toLowerCase();
+    const currentList = this.offres();
+
+    if (!query) return currentList;
+
+    return currentList.filter(offre =>
+      (offre.titre && offre.titre.toLowerCase().includes(query)) ||
+      (offre.description && offre.description.toLowerCase().includes(query)) ||
+      (offre.departement && offre.departement.toLowerCase().includes(query)) // Remplace .lieu par .departement si c'est le nom de la propriété dans ton modèle
+    );
+  });
 
   deleteOffre(id: number): void {
     if (confirm('Voulez-vous supprimer cette offre ?')) {

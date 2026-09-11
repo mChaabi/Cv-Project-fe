@@ -124,6 +124,15 @@ export class CandidaturesComponent implements OnInit {
     return map[statut] ?? statut;
   }
 
+
+  // Cambia tu computed para filtrar la lista completa localmente de forma instantánea:
+  filteredCandidatures = computed(() => {
+    const statut = this.filterStatut();
+    const list = this.candidatures();
+    if (statut === 'ALL') return list;
+    return list.filter(c => c.statut === statut);
+  });
+
   onFilterChange(event: Event): void {
     const statut = (event.target as HTMLSelectElement).value;
     this.filterStatut.set(statut);

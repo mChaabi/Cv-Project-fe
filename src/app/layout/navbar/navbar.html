@@ -1,6 +1,7 @@
 <header class="navbar-container" [class.dark-theme]="isDarkTheme">
   <!-- Input con placeholder traducido -->
-  <input type="text" class="search-input" [placeholder]="'nav.search' | translate" />
+  <input type="text" class="search-input" [placeholder]="'nav.search' | translate" [value]="searchService.searchTerm()"
+    (input)="onSearchChange($event)" />
 
   <div class="navbar-actions">
     <!-- Sélecteur de langue propre -->

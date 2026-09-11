@@ -3,6 +3,7 @@ import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NotificationService } from '../../services/notification';
 import { Notification } from '../../models/notification';
+import { SearchService } from '../../services/search';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,7 @@ export class NavbarComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   public translate = inject(TranslateService);
   private notificationService = inject(NotificationService);
+  public searchService = inject(SearchService);
 
   notifications: Notification[] = [];
   unreadCount = 0;
@@ -91,6 +93,11 @@ export class NavbarComponent implements OnInit {
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = lang;
     }
+  }
+
+  onSearchChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchService.updateSearch(value);
   }
 
   private formatRole(role: string): void {

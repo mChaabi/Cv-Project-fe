@@ -154,7 +154,7 @@
   "candidatureModal.saving": "Enregistrement...",
   "candidatureModal.create": "Créer la candidature",
   "CV_LIST": {
-    "TITLE": "CVs & Profils",
+    "TITLE": "CVs et Profils",
     "SUBTITLE": "Gestion et centralisation des CVs",
     "NEW_CV_BTN": "+ Nouveau CV",
     "LOADING": "Chargement des CVs...",
@@ -163,7 +163,8 @@
     "EXPERIENCE_COUNT": "expérience(s)",
     "FORMATION_COUNT": "formation(s)",
     "DETAILS_BTN": "Voir les détails",
-    "ORIGINAL_FILE": "Fichier original"
+    "ORIGINAL_FILE": "Fichier original",
+    "PRACTICE_INTERVIEW": "Pratiquer l'entretien"
   },
   "CV_MODAL": {
     "SKILLS": "Compétences",

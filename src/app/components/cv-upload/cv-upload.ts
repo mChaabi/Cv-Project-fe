@@ -10,7 +10,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-cv-upload',
   standalone: true,
-  imports: [CommonModule, FormsModule,TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './cv-upload.html',
   styleUrls: ['./cv-upload.scss'] // Réutilise ou étend le SCSS
 })
@@ -62,6 +62,7 @@ export class CvUploadComponent implements OnInit {
     const extracted = preview.extracted;
     const payload = {
       candidatId: this.selectedCandidatId,
+      fichierUrl: preview.fichierUrl,
       tempFileName: preview.tempFileName,
       originalFileName: preview.originalFileName,
       titre: extracted.candidat?.titrePoste ?? null,
