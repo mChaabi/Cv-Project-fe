@@ -1,4 +1,11 @@
 {
+  "nav": {
+    "planning": "Planning",
+    "search": "Search...",
+    "clear": "Clear",
+    "theme": "Theme",
+    "alerts": "Alerts"
+  },
   "nav.search": "Search for a candidate, an offer...",
   "nav.theme": "Theme",
   "nav.clear": "Light",
@@ -234,5 +241,20 @@
       "CREATE_BTN": "Create User",
       "CREATING_BTN": "Creating..."
     }
+  },
+  "planning": {
+    "title": "📅 Intelligent Interview Scheduling",
+    "subtitle": "Select a candidate to instantly get their matching job offers.",
+    "selectCandidate": "🎯 Choose a Candidate:",
+    "placeholderCandidate": "-- Select a candidate profile --",
+    "recommendedOffers": "💡 Recommended offers for this profile",
+    "loading": "Searching for the best offers...",
+    "noOffers": "No matching offers found for this candidate.",
+    "match": "Match",
+    "dateLabel": "Interview Date",
+    "scheduleButton": "✉️ Schedule & Send",
+    "alertDate": "Please enter a date and time for the interview!",
+    "successAlert": "✅ Interview scheduled and notification sent successfully to the candidate!",
+    "errorAlert": "❌ Error sending the invitation."
   }
 }

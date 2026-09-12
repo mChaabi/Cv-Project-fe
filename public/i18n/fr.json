@@ -1,4 +1,11 @@
 {
+  "nav": {
+    "planning": "Planification",
+    "search": "Rechercher...",
+    "clear": "Effacer",
+    "theme": "Thème",
+    "alerts": "Alertes"
+  },
   "nav.search": "Rechercher un candidat, une offre...",
   "nav.theme": "Thème",
   "nav.clear": "Clair",
@@ -234,5 +241,20 @@
       "CREATE_BTN": "Créer l'utilisateur",
       "CREATING_BTN": "Création..."
     }
+  },
+  "planning": {
+    "title": "📅 Planification Intelligente des Entretiens",
+    "subtitle": "Sélectionnez un candidat pour obtenir instantanément ses offres correspondantes.",
+    "selectCandidate": "🎯 Choisir un Candidat :",
+    "placeholderCandidate": "-- Sélectionnez un profil candidat --",
+    "recommendedOffers": "💡 Offres recommandées pour ce profil",
+    "loading": "Recherche des meilleures offres en cours...",
+    "noOffers": "Aucune offre correspondante trouvée pour ce candidat.",
+    "match": "Match",
+    "dateLabel": "Date de l'entretien",
+    "scheduleButton": "✉️ Planifier & Envoyer",
+    "alertDate": "Veuillez renseigner une date et heure pour l'entretien !",
+    "successAlert": "✅ Entretien programmé et notification envoyée au candidat avec succès !",
+    "errorAlert": "❌ Erreur lors de l'envoi de l'invitation."
   }
 }

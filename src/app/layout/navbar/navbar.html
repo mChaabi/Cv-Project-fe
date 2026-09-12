@@ -12,7 +12,6 @@
       <option value="ar">🇲🇦 AR</option>
     </select>
 
-    <!-- 📅 Planning : Ouvre le modal sur la même page -->
     <button class="action-btn" (click)="togglePlanningModal()" [title]="'nav.planning' | translate">
       📅 <span class="d-none d-md-inline">{{ 'nav.planning' | translate }}</span>
     </button>
@@ -82,18 +81,18 @@
     <!-- En-tête du Modal -->
     <div class="modal-header-box">
       <div class="header-titles">
-        <h2>📅 Planification Intelligente des Entretiens</h2>
-        <p>Sélectionnez un candidat pour obtenir instantanément ses offres correspondantes.</p>
+        <h2>{{ 'planning.title' | translate }}</h2>
+        <p>{{ 'planning.subtitle' | translate }}</p>
       </div>
       <button class="close-modal-btn" (click)="togglePlanningModal()">✕</button>
     </div>
 
     <!-- Formulaire de Sélection Simple -->
     <div class="selection-form-group">
-      <label for="candidateSelect">🎯 Choisir un Candidat :</label>
+      <label for="candidateSelect">{{ 'planning.selectCandidate' | translate }}</label>
       <select id="candidateSelect" class="styled-select" [(ngModel)]="selectedCandidateId"
         (change)="onCandidateSelect()">
-        <option [value]="null" disabled>-- Sélectionnez un profil candidat --</option>
+        <option [value]="null" disabled>{{ 'planning.placeholderCandidate' | translate }}</option>
         @for (candidate of candidatesList; track candidate.id) {
         <option [value]="candidate.id">
           {{ candidate.nom }} {{ candidate.prenom }} — [ Email : {{ candidate.email }} ]
@@ -105,26 +104,29 @@
     <!-- Section des Offres Directes -->
     @if (selectedCandidateId) {
     <div class="matching-offers-container">
-      <h3>💡 Offres recommandées pour ce profil</h3>
+      <h3>{{ 'planning.recommendedOffers' | translate }}</h3>
 
       @if (isLoadingMatching) {
       <div class="modal-loading">
         <div class="spinner"></div>
-        <span>Recherche des meilleures offres en cours...</span>
+        <span>{{ 'planning.loading' | translate }}</span>
       </div>
       } @else if (matchedOffers.length > 0) {
       <div class="offers-grid">
         @for (match of matchedOffers; track match.offreId) {
         <div class="offer-item-card">
-          <div class="match-score-badge">{{ match.score }}% Match</div>
+          <div class="match-score-badge">{{ match.score }}% {{ 'planning.match' | translate }}</div>
           <h4>{{ match.titreOffre }}</h4>
           <span class="dept-tag">📍 {{ match.departement }}</span>
           <p class="match-reason">{{ match.raison }}</p>
 
           <div class="schedule-action-box">
-            <input type="datetime-local" class="styled-datetime" [(ngModel)]="match.interviewDate">
+            <div class="form-group-mini">
+              <label>{{ 'planning.dateLabel' | translate }}</label>
+              <input type="datetime-local" class="styled-datetime" [(ngModel)]="match.interviewDate">
+            </div>
             <button class="btn-schedule" (click)="scheduleInterview(match)">
-              ✉️ Planifier & Envoyer
+              {{ 'planning.scheduleButton' | translate }}
             </button>
           </div>
         </div>
@@ -132,7 +134,7 @@
       </div>
       } @else {
       <div class="empty-offers">
-        <p>Aucune offre correspondante trouvée pour ce candidat.</p>
+        <p>{{ 'planning.noOffers' | translate }}</p>
       </div>
       }
     </div>

@@ -112,7 +112,7 @@ export class NavbarComponent implements OnInit {
 
   scheduleInterview(match: any): void {
     if (!match.interviewDate) {
-      alert("Veuillez renseigner une date et heure pour l'entretien !");
+      alert(this.translate.instant('planning.alertDate'));
       return;
     }
 
@@ -127,12 +127,12 @@ export class NavbarComponent implements OnInit {
 
     this.emailService.sendInterviewInvitation(payload).subscribe({
       next: () => {
-        alert("✅ Entretien programmé et notification envoyée au candidat avec succès !");
+        alert(this.translate.instant('planning.successAlert'));
         this.showPlanningModal = false;
       },
       error: (err) => {
         console.error(err);
-        alert("❌ Erreur lors de l'envoi de l'invitation.");
+        alert(this.translate.instant('planning.errorAlert'));
       }
     });
   }
