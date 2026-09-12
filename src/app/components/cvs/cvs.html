@@ -4,66 +4,102 @@
       <h1>{{ 'CV_LIST.TITLE' | translate }}</h1>
       <p class="subtitle">{{ 'CV_LIST.SUBTITLE' | translate }}</p>
     </div>
-    <!-- Redirection vers le composant de téléchargement -->
-    <button class="btn-primary" (click)="navigateToUpload()">{{ 'CV_LIST.NEW_CV_BTN' | translate }}</button>
+    <button class="btn-primary" (click)="navigateToUpload()">+ {{ 'CV_LIST.NEW_CV_BTN' | translate }}</button>
   </header>
 
   @if (isLoading()) {
-    <div class="loading-state">{{ 'CV_LIST.LOADING' | translate }}</div>
+  <div class="loading-state">{{ 'CV_LIST.LOADING' | translate }}</div>
   } @else if (groupedCvs().length === 0) {
-    <div class="empty-state">{{ 'CV_LIST.EMPTY' | translate }}</div>
+  <div class="empty-state">{{ 'CV_LIST.EMPTY' | translate }}</div>
   } @else {
-    <div class="candidate-groups">
-      <!-- Utilisation de paginatedGroupedCvs() au lieu de groupedCvs() -->
-      @for (group of paginatedGroupedCvs(); track group.candidatId) {
-        <section class="candidate-group">
-          <div class="candidate-header">
-            <div class="candidate-avatar">{{ group.initials }}</div>
-            <div>
-              <h2>{{ group.candidatNomComplet }}</h2>
-              <span class="cv-count">{{ group.cvs.length }} CV{{ group.cvs.length > 1 ? 's' : '' }}</span>
-            </div>
-          </div>
-
-          <div class="cv-cards">
-            @for (cv of group.cvs; track cv.id) {
-              <div class="cv-card">
-                <div class="cv-card-header">
-                  <h3>{{ cv.titre }}</h3>
-                  <button class="btn-icon" (click)="deleteCv(cv.id)">{{ 'CV_LIST.DELETE' | translate }}</button>
-                </div>
-
-                <div class="cv-meta">
-                  <span>{{ cv.experiences?.length ?? 0 }} {{ 'CV_LIST.EXPERIENCE_COUNT' | translate }}</span>
-                  <span class="divider-dot"></span>
-                  <span>{{ cv.formations?.length ?? 0 }} {{ 'CV_LIST.FORMATION_COUNT' | translate }}</span>
-                </div>
-
-                <div class="competence-tags">
-                  @for (comp of cv.competences ?? []; track comp.id) {
-                    <span class="tag">{{ comp.libelle }}</span>
-                  }
-                </div>
-
-                <div class="cv-card-actions">
-                  <button class="btn-detail" (click)="openDetailModal(cv)">{{ 'CV_LIST.DETAILS_BTN' | translate }}</button>
-                  <button class="btn-primary" (click)="irAEntrevista(cv)">{{ 'CV_LIST.PRACTICE_INTERVIEW' | translate }}</button>
-                  <a [href]="getFileUrl(cv)" target="_blank" class="download-link">
-                    <span class="download-icon"></span>
-                    {{ 'CV_LIST.ORIGINAL_FILE' | translate }}
-                  </a>
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="professional-table">
+        <thead>
+          <tr>
+            <th>Candidat</th>
+            <th>CV / Titre</th>
+            <th>Expériences / Formations</th>
+            <th>Compétences</th>
+            <th class="text-center">Score Entretien</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (group of paginatedGroupedCvs(); track group.candidatId) {
+          @for (cv of group.cvs; track cv.id; let isFirst = $first) {
+          <tr>
+            <!-- Nombre y Avatar (solo se muestra en la primera fila del candidato si tiene varios CVs) -->
+            <td>
+              @if (isFirst) {
+              <div class="candidate-cell">
+                <div class="candidate-avatar">{{ group.initials }}</div>
+                <div>
+                  <span class="candidate-name">{{ group.candidatNomComplet }}</span>
+                  <span class="cv-badge-count">{{ group.cvs.length }} CV{{ group.cvs.length > 1 ? 's' : '' }}</span>
                 </div>
               </div>
-            }
-          </div>
-        </section>
-      }
+              }
+            </td>
+
+            <!-- Título del CV -->
+            <td>
+              <span class="cv-title-text">{{ cv.titre }}</span>
+            </td>
+
+            <!-- Métricas / Contadores -->
+            <td>
+              <div class="cv-meta-tags">
+                <span class="meta-pill">{{ cv.experiences?.length ?? 0 }} {{ 'CV_LIST.EXPERIENCE_COUNT' | translate
+                  }}</span>
+                <span class="meta-pill">{{ cv.formations?.length ?? 0 }} {{ 'CV_LIST.FORMATION_COUNT' | translate
+                  }}</span>
+              </div>
+            </td>
+
+            <!-- Competencias resumidas -->
+            <td>
+              <div class="competence-tags-mini">
+                @for (comp of (cv.competences ?? []).slice(0, 3); track comp.id) {
+                <span class="tag-mini">{{ comp.libelle }}</span>
+                }
+                @if ((cv.competences?.length ?? 0) > 3) {
+                <span class="tag-mini more">+{{ (cv.competences?.length ?? 0) - 3 }}</span>
+                }
+              </div>
+            </td>
+
+            <!-- Score (Se puede calcular o mostrar por modal, dejamos espacio limpio) -->
+            <td class="text-center">
+              <span class="score-pill score-none">--</span>
+            </td>
+
+            <!-- Acciones (Detalle, Original, Eliminar) -->
+            <td class="text-right">
+              <div class="action-buttons-group">
+                <button class="btn-action-icon" (click)="openDetailModal(cv)" title="Voir les détails">
+                  👁️
+                </button>
+                <a [href]="getFileUrl(cv)" target="_blank" class="btn-action-icon" title="Fichier original">
+                  📄
+                </a>
+                <button class="btn-action-icon delete" (click)="deleteCv(cv.id)" title="Supprimer">
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+          }
+          }
+        </tbody>
+      </table>
     </div>
 
     <!-- BARRE DE PAGINATION -->
     <div class="pagination-bar">
       <span class="pagination-info">
-        Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, groupedCvs().length) }} sur {{ groupedCvs().length }} candidats
+        Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize,
+        groupedCvs().length) }} sur {{ groupedCvs().length }} candidats
       </span>
       <div class="pagination-controls">
         <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
@@ -71,9 +107,9 @@
         </button>
 
         @for (page of totalPagesArray(); track page) {
-          <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
-            {{ page }}
-          </button>
+        <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
+          {{ page }}
+        </button>
         }
 
         <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
@@ -81,104 +117,101 @@
         </button>
       </div>
     </div>
+  </div>
   }
 
-  <!-- Modale de détail d'un CV -->
+  <!-- Modale de détail d'un CV (Intacta pero optimizada) -->
   @if (selectedCvDetail()) {
-    <div class="modal-backdrop" (click)="closeDetailModal()">
-      <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h3>{{ selectedCvDetail()!.titre }}</h3>
-          <button class="btn-close" (click)="closeDetailModal()">×</button>
-        </div>
+  <div class="modal-backdrop" (click)="closeDetailModal()">
+    <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ selectedCvDetail()!.titre }}</h3>
+        <button class="btn-close" (click)="closeDetailModal()">×</button>
+      </div>
 
-        <div class="detail-body">
-          <section class="detail-section">
-            <div class="candidate-summary">
-              <div class="candidate-avatar-lg">{{ getInitials(selectedCvDetail()!) }}</div>
-              <div>
-                <h4>{{ selectedCvDetail()!.candidat?.prenom }} {{ selectedCvDetail()!.candidat?.nom }}</h4>
-                <p class="candidate-contact">
-                  {{ selectedCvDetail()!.candidat?.email }}
-                  @if (selectedCvDetail()!.candidat?.telephone) { · {{ selectedCvDetail()!.candidat?.telephone }} }
-                </p>
-              </div>
-
-              <!-- ═══ NOUVEAU : badge score entretien dans le résumé candidat ═══ -->
-              @if (interviewScore() !== null) {
-                <span class="score-badge" [ngClass]="getScoreClass(interviewScore())">
-                  {{ interviewScore() }}/100
-                </span>
-              }
+      <div class="detail-body">
+        <section class="detail-section">
+          <div class="candidate-summary">
+            <div class="candidate-avatar-lg">{{ getInitials(selectedCvDetail()!) }}</div>
+            <div>
+              <h4>{{ selectedCvDetail()!.candidat?.prenom }} {{ selectedCvDetail()!.candidat?.nom }}</h4>
+              <p class="candidate-contact">
+                {{ selectedCvDetail()!.candidat?.email }}
+                @if (selectedCvDetail()!.candidat?.telephone) { · {{ selectedCvDetail()!.candidat?.telephone }} }
+              </p>
             </div>
-          </section>
 
-          <section class="detail-section">
-            <h5 class="section-title">{{ 'CV_MODAL.SKILLS' | translate }}</h5>
-            <div class="competence-tags">
-              @for (comp of selectedCvDetail()!.competences ?? []; track comp.id) {
-                <span class="tag">{{ comp.libelle }}</span>
-              } @empty {
-                <p class="empty-hint">{{ 'CV_MODAL.NO_SKILLS' | translate }}</p>
-              }
+            @if (interviewScore() !== null) {
+            <span class="score-badge" [ngClass]="getScoreClass(interviewScore())">
+              {{ interviewScore() }}/100
+            </span>
+            }
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h5 class="section-title">{{ 'CV_MODAL.SKILLS' | translate }}</h5>
+          <div class="competence-tags">
+            @for (comp of selectedCvDetail()!.competences ?? []; track comp.id) {
+            <span class="tag">{{ comp.libelle }}</span>
+            } @empty {
+            <p class="empty-hint">{{ 'CV_MODAL.NO_SKILLS' | translate }}</p>
+            }
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h5 class="section-title">{{ 'CV_MODAL.EXPERIENCES' | translate }}</h5>
+          @for (exp of selectedCvDetail()!.experiences ?? []; track exp.poste) {
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+              <strong>{{ exp.poste }}</strong>
+              <span class="timeline-org">{{ exp.entreprise }}</span>
+              <p class="timeline-desc">{{ exp.description }}</p>
             </div>
-          </section>
+          </div>
+          } @empty {
+          <p class="empty-hint">{{ 'CV_MODAL.NO_EXPERIENCES' | translate }}</p>
+          }
+        </section>
 
-          <section class="detail-section">
-            <h5 class="section-title">{{ 'CV_MODAL.EXPERIENCES' | translate }}</h5>
-            @for (exp of selectedCvDetail()!.experiences ?? []; track exp.poste) {
-              <div class="timeline-item">
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                  <strong>{{ exp.poste }}</strong>
-                  <span class="timeline-org">{{ exp.entreprise }}</span>
-                  <p class="timeline-desc">{{ exp.description }}</p>
-                </div>
-              </div>
-            } @empty {
-              <p class="empty-hint">{{ 'CV_MODAL.NO_EXPERIENCES' | translate }}</p>
-            }
-          </section>
+        <section class="detail-section">
+          <h5 class="section-title">{{ 'CV_MODAL.FORMATIONS' | translate }}</h5>
+          @for (form of selectedCvDetail()!.formations ?? []; track form.diplome) {
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+              <strong>{{ form.diplome }}</strong>
+              <span class="timeline-org">{{ form.etablissement }}</span>
+            </div>
+          </div>
+          } @empty {
+          <p class="empty-hint">{{ 'CV_MODAL.NO_FORMATIONS' | translate }}</p>
+          }
+        </section>
 
-          <section class="detail-section">
-            <h5 class="section-title">{{ 'CV_MODAL.FORMATIONS' | translate }}</h5>
-            @for (form of selectedCvDetail()!.formations ?? []; track form.diplome) {
-              <div class="timeline-item">
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                  <strong>{{ form.diplome }}</strong>
-                  <span class="timeline-org">{{ form.etablissement }}</span>
-                </div>
-              </div>
-            } @empty {
-              <p class="empty-hint">{{ 'CV_MODAL.NO_FORMATIONS' | translate }}</p>
-            }
-          </section>
+        <section class="detail-section">
+          <h5 class="section-title">💬 Transcription de l'entretien</h5>
+          @if (transcriptLoading()) {
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Chargement...</p>
+          </div>
+          } @else if (selectedTranscript().length > 0) {
+          <app-transcript-view [entries]="selectedTranscript()"></app-transcript-view>
+          } @else {
+          <p class="empty-hint">Aucun entretien passé pour ce candidat.</p>
+          }
+        </section>
+      </div>
 
-          <!-- ═══════════════════════════════════════════════════ -->
-          <!-- NOUVEAU : Transcription de l'entretien               -->
-          <!-- ═══════════════════════════════════════════════════ -->
-          <section class="detail-section">
-            <h5 class="section-title">💬 Transcription de l'entretien</h5>
-            @if (transcriptLoading()) {
-              <div class="loading-state">
-                <div class="spinner"></div>
-                <p>Chargement...</p>
-              </div>
-            } @else if (selectedTranscript().length > 0) {
-              <app-transcript-view [entries]="selectedTranscript()"></app-transcript-view>
-            } @else {
-              <p class="empty-hint">Aucun entretien passé pour ce candidat.</p>
-            }
-          </section>
-
-        </div>
-
-        <div class="modal-footer">
-          <a [href]="getFileUrl(selectedCvDetail()!)" target="_blank" class="btn-secondary">{{ 'CV_LIST.ORIGINAL_FILE' | translate }}</a>
-          <button class="btn-primary" (click)="closeDetailModal()">{{ 'CV_MODAL.CLOSE' | translate }}</button>
-        </div>
+      <div class="modal-footer">
+        <a [href]="getFileUrl(selectedCvDetail()!)" target="_blank" class="btn-secondary">{{ 'CV_LIST.ORIGINAL_FILE' |
+          translate }}</a>
+        <button class="btn-primary" (click)="closeDetailModal()">{{ 'CV_MODAL.CLOSE' | translate }}</button>
       </div>
     </div>
+  </div>
   }
 </div>

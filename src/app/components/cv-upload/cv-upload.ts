@@ -63,10 +63,8 @@ export class CvUploadComponent implements OnInit {
     const payload = {
       candidatId: this.selectedCandidatId,
       fichierUrl: preview.fichierUrl,
-      tempFileName: preview.tempFileName,
-      originalFileName: preview.originalFileName,
-      titre: extracted.candidat?.titrePoste ?? null,
-      competences: extracted.competences ?? [],
+      titre: extracted.candidat?.titrePoste ?? 'CV sans titre',
+      competencesNoms: extracted.competences ?? [],
       experiences: extracted.experiences ?? [],
       formations: extracted.formations ?? []
     };
@@ -77,7 +75,7 @@ export class CvUploadComponent implements OnInit {
         this.router.navigate(['/cvs']);
       },
       error: (err) => {
-        console.error('Erreur lors de l\'enregistrement', err);
+        console.error("Erreur lors de l'enregistrement", err);
         alert('Erreur lors de l\'enregistrement du CV.');
       }
     });

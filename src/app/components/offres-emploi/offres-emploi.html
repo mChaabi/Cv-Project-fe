@@ -21,60 +21,101 @@
 
   <!-- Cards Grid -->
   @if (isLoading()) {
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>{{ 'offres.loading' | translate }}</p>
-    </div>
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>{{ 'offres.loading' | translate }}</p>
+  </div>
   } @else {
-    @if (offres().length > 0) {
-      <div class="offres-grid">
-        <!-- Utilisation de paginatedOffres() au lieu de offres() -->
-        @for (offre of paginatedOffres(); track offre.id) {
-          <div class="offre-card">
-            <div class="card-header">
-              <span class="badge" [class.badge-open]="offre.statut === 'OUVERTE'" [class.badge-closed]="offre.statut === 'FERMEE'">
-                {{ offre.statut === 'OUVERTE' ? ('offres.statutOuverte' | translate) : ('offres.statutFermee' | translate) }}
-              </span>
-              <button class="btn-icon" (click)="deleteOffre(offre.id!)" [title]="'offres.delete' | translate">🗑️</button>
-            </div>
-
-            <h3 class="card-title">{{ offre.titre }}</h3>
-            <span class="department">📍 {{ offre.departement }}</span>
-            <p class="description">{{ offre.description }}</p>
-
-            <div class="card-footer">
-              <small>{{ 'offres.createdOn' | translate }} {{ offre.dateCreation | date:'dd/MM/yyyy' }}</small>
-            </div>
-          </div>
-        }
-      </div>
-
-      <!-- BARRE DE PAGINATION -->
-      <div class="pagination-bar">
-        <span class="pagination-info">
-          Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, offres().length) }} sur {{ offres().length }} offres
+  @if (offres().length > 0) {
+  <div class="offres-grid">
+    <!-- Dans la boucle des offres -->
+    @for (offre of paginatedOffres(); track offre.id) {
+    <div class="offre-card"> <!-- Suppression du mouseenter ici -->
+      <div class="card-header">
+        <span class="badge" [class.badge-open]="offre.statut === 'OUVERTE'"
+          [class.badge-closed]="offre.statut === 'FERMEE'">
+          {{ offre.statut === 'OUVERTE' ? ('offres.statutOuverte' | translate) : ('offres.statutFermee' | translate) }}
         </span>
-        <div class="pagination-controls">
-          <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
-            Précédent
-          </button>
-          
-          @for (page of totalPagesArray(); track page) {
-            <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
-              {{ page }}
-            </button>
-          }
 
-          <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
-            Suivant
+        <!-- Bouton d'action pour afficher/masquer l'IA Matching -->
+        <div class="header-actions">
+          <button class="btn-icon" (click)="toggleMatching(offre.id!)" title="Afficher les top candidats IA">
+            🎯
           </button>
+          <button class="btn-icon" (click)="deleteOffre(offre.id!)" title="Supprimer l'offre">🗑️</button>
         </div>
       </div>
 
-    } @else {
-      <div class="empty-state">
-        <p>{{ 'offres.empty' | translate }}</p>
+      <h3 class="card-title">{{ offre.titre }}</h3>
+      <span class="department">📍 {{ offre.departement }}</span>
+      <p class="description">{{ offre.description }}</p>
+
+      <!-- Panel de Matching affiché selon l'état -->
+      @if (loadingMatching[offre.id!]) {
+      <div class="matching-box loading">Analyse IA des candidats...</div>
+      }
+
+      @if (matchingData[offre.id!] && matchingData[offre.id!].length > 0) {
+      <div class="matching-box">
+        <h4>🎯 Top Candidats (Match IA) :</h4>
+        <ul>
+          @for (match of matchingData[offre.id!]; track match.nomCandidat) {
+          <li class="match-item">
+            <div class="match-info">
+              <strong>{{ match.nomCandidat }}</strong>
+              <span class="score">{{ match.scoreMatch }}%</span>
+            </div>
+            <p class="reason">{{ match.raison }}</p>
+
+            <div class="invitation-action-box">
+              <div class="form-group-mini">
+                <label>Date de l'entretien</label>
+                <input type="datetime-local" class="input-datetime" [(ngModel)]="match.selectedDate">
+              </div>
+              <button class="btn-invitation" (click)="sendInvitation(match, offre)">
+                ✉️ Envoyer Invitation IA
+              </button>
+            </div>
+          </li>
+          }
+        </ul>
       </div>
+      }
+
+      <div class="card-footer">
+        <small>{{ 'offres.createdOn' | translate }} {{ offre.dateCreation | date:'dd/MM/yyyy' }}</small>
+      </div>
+    </div>
     }
+  </div>
+
+  <!-- BARRE DE PAGINATION -->
+  <div class="pagination-bar">
+    <span class="pagination-info">
+      Affichage de {{ (currentPage() - 1) * pageSize + 1 }} à {{ mathMin(currentPage() * pageSize, offres().length) }}
+      sur {{ offres().length }} offres
+    </span>
+    <div class="pagination-controls">
+      <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
+        Précédent
+      </button>
+
+      @for (page of totalPagesArray(); track page) {
+      <button class="page-btn" [class.active]="currentPage() === page" (click)="changePage(page)">
+        {{ page }}
+      </button>
+      }
+
+      <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
+        Suivant
+      </button>
+    </div>
+  </div>
+
+  } @else {
+  <div class="empty-state">
+    <p>{{ 'offres.empty' | translate }}</p>
+  </div>
+  }
   }
 </div>

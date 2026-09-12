@@ -5,11 +5,13 @@ import { OffreEmploiService } from '../../services/offre-emploi';
 import { OffreEmploi } from '../../models/offre-emploi';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SearchService } from '../../services/search';
+import { FormsModule } from '@angular/forms';
+import { EmailService } from '../../services/email';
 
 @Component({
   selector: 'app-offres-emploi',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, FormsModule],
   templateUrl: './offres-emploi.html',
   styleUrls: ['./offres-emploi.scss']
 })
@@ -17,10 +19,14 @@ export class OffresEmploiComponent implements OnInit {
   private offreService = inject(OffreEmploiService);
   private router = inject(Router);
   private searchService = inject(SearchService);
+  private emailService = inject(EmailService);
 
   offres = signal<OffreEmploi[]>([]);
   isLoading = signal<boolean>(true);
   filterStatut = signal<string>('ALL');
+  matchingData: { [key: number]: any[] } = {};
+  loadingMatching: { [key: number]: boolean } = {};
+  showMatchingMap: { [key: number]: boolean } = {};
 
   // Paramètres de pagination (par exemple, 6 éléments par page pour s'adapter à une grille)
   currentPage = signal<number>(1);
@@ -44,9 +50,61 @@ export class OffresEmploiComponent implements OnInit {
     return this.offres().slice(start, end);
   });
 
+  toggleMatching(offreId: number): void {
+    // Inverse l'état (ouvert/fermé)
+    const currentState = !!this.showMatchingMap[offreId];
+    this.showMatchingMap[offreId] = !currentState;
+
+    // Si on l'ouvre et que les données ne sont pas encore chargées, on les récupère
+    if (this.showMatchingMap[offreId] && !this.matchingData[offreId] && !this.loadingMatching[offreId]) {
+      this.loadMatchingCandidates(offreId);
+    }
+  }
+
+  loadMatchingCandidates(offreId: number): void {
+    this.loadingMatching[offreId] = true;
+    this.offreService.getMatchingCandidates(offreId).subscribe({
+      next: (data) => {
+        this.matchingData[offreId] = data;
+        this.loadingMatching[offreId] = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.loadingMatching[offreId] = false;
+      }
+    });
+  }
+
+  // FONCTION CORRIGÉE POUR ENVOYER L'INVITATION
+  sendInvitation(candidate: any, offre: any): void {
+    if (!candidate.selectedDate) {
+      alert("Veuillez sélectionner une date et une heure pour l'entretien !");
+      return;
+    }
+
+    const payload = {
+      toEmail: candidate.email,
+      candidateName: candidate.nomCandidat || `${candidate.nom || ''} ${candidate.prenom || ''}`.trim(),
+      jobTitle: offre.titre,
+      scoreMatch: candidate.scoreMatch ? candidate.scoreMatch.toString() : '0',
+      interviewDate: candidate.selectedDate
+    };
+
+    this.emailService.sendInterviewInvitation(payload).subscribe({
+      next: () => {
+        alert("✅ Invitation envoyée avec succès par e-mail généré par l'IA !");
+      },
+      error: (err) => {
+        console.error(err);
+        alert("❌ Erreur lors de l'envoi de l'e-mail.");
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.loadOffres();
   }
+
   loadOffres(): void {
     this.isLoading.set(true);
     this.offreService.getAll().subscribe({
@@ -104,7 +162,7 @@ export class OffresEmploiComponent implements OnInit {
     return currentList.filter(offre =>
       (offre.titre && offre.titre.toLowerCase().includes(query)) ||
       (offre.description && offre.description.toLowerCase().includes(query)) ||
-      (offre.departement && offre.departement.toLowerCase().includes(query)) // Remplace .lieu par .departement si c'est le nom de la propriété dans ton modèle
+      (offre.departement && offre.departement.toLowerCase().includes(query))
     );
   });
 

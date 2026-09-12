@@ -37,4 +37,8 @@ export class OffreEmploiService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getMatchingCandidates(offreId: number): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/${offreId}/matching`);
+}
 }

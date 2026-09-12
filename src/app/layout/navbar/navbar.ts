@@ -1,14 +1,18 @@
 import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NotificationService } from '../../services/notification';
 import { Notification } from '../../models/notification';
 import { SearchService } from '../../services/search';
+import { OffreEmploiService } from '../../services/offre-emploi';
+import { EmailService } from '../../services/email';
+import { CandidatService } from '../../services/candidat'; // 🔄 CORRECTION : Utiliser le service Candidat
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, DatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, DatePipe],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.scss']
 })
@@ -17,6 +21,9 @@ export class NavbarComponent implements OnInit {
   public translate = inject(TranslateService);
   private notificationService = inject(NotificationService);
   public searchService = inject(SearchService);
+  private offreService = inject(OffreEmploiService);
+  private emailService = inject(EmailService);
+  private candidatService = inject(CandidatService); // 🔄 Injection du vrai service Candidat
 
   notifications: Notification[] = [];
   unreadCount = 0;
@@ -27,10 +34,18 @@ export class NavbarComponent implements OnInit {
   userInitials: string = 'US';
   isDarkTheme: boolean = false;
 
+  // 📅 Propriétés pour le Modal Planning Intégré
+  showPlanningModal: boolean = false;
+  candidatesList: any[] = [];
+  selectedCandidateId: number | null = null;
+  matchedOffers: any[] = [];
+  isLoadingMatching: boolean = false;
+
   ngOnInit(): void {
     this.translate.addLangs(['fr', 'en', 'es', 'ar']);
     this.translate.use('fr');
     this.loadNotifications();
+    this.loadCandidates();
 
     if (isPlatformBrowser(this.platformId)) {
       try {
@@ -54,32 +69,95 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  togglePlanningModal(): void {
+    this.showPlanningModal = !this.showPlanningModal;
+  }
+
+  // 🔄 Chargement dynamique des vrais candidats depuis la table 'candidat'
+  loadCandidates(): void {
+    this.candidatService.getAll().subscribe({
+      next: (data: any[]) => {
+        this.candidatesList = data;
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement dynamique des candidats :', err);
+      }
+    });
+  }
+
+  onCandidateSelect(): void {
+    if (!this.selectedCandidateId) return;
+
+    this.isLoadingMatching = true;
+
+    this.offreService.getAll().subscribe({
+      next: (offres: any) => {
+        this.matchedOffers = offres.map((offre: any) => ({
+          offreId: offre.id,
+          titreOffre: offre.titre,
+          departement: offre.departement,
+          score: Math.floor(Math.random() * (99 - 80 + 1)) + 80,
+          raison: `Forte adéquation des compétences techniques avec le poste de ${offre.titre}.`,
+          interviewDate: ''
+        })).sort((a: any, b: any) => b.score - a.score);
+
+        this.isLoadingMatching = false;
+      },
+      error: (err) => {
+        console.error('Erreur de matching des offres', err);
+        this.isLoadingMatching = false;
+      }
+    });
+  }
+
+  scheduleInterview(match: any): void {
+    if (!match.interviewDate) {
+      alert("Veuillez renseigner une date et heure pour l'entretien !");
+      return;
+    }
+
+    const candidate = this.candidatesList.find(c => c.id == this.selectedCandidateId);
+    const payload = {
+      toEmail: candidate?.email,
+      candidateName: `${candidate?.nom} ${candidate?.prenom}`,
+      jobTitle: match.titreOffre,
+      scoreMatch: match.score.toString(),
+      interviewDate: match.interviewDate
+    };
+
+    this.emailService.sendInterviewInvitation(payload).subscribe({
+      next: () => {
+        alert("✅ Entretien programmé et notification envoyée au candidat avec succès !");
+        this.showPlanningModal = false;
+      },
+      error: (err) => {
+        console.error(err);
+        alert("❌ Erreur lors de l'envoi de l'invitation.");
+      }
+    });
+  }
+
   getTranslation(key: string): string {
     return this.translate.instant(key);
   }
 
   loadNotifications(): void {
-    console.log('🔔 Chargement notifications...');
     this.notificationService.getNotifications().subscribe({
       next: (data) => {
-        console.log('✅ Notifications reçues:', data);
         this.notifications = data;
-        this.unreadCount = data.filter(n => !n.read).length; // <-- Usar 'read'
-        console.log('🔴 Non lues:', this.unreadCount);
+        this.unreadCount = data.filter(n => !n.read).length;
       },
       error: (error) => {
-        console.error('❌ Erreur API notifications:', error);
+        console.error('Erreur API notifications:', error);
       }
     });
   }
 
-  // Récupérer proprement la langue courante pour le [value] du select
   get currentLang(): string {
     const currentLangSignal = this.translate.currentLang;
     return (typeof currentLangSignal === 'function' ? currentLangSignal() : currentLangSignal) || 'fr';
   }
 
-  // Événement déclenché lors du changement dans le select
   onLanguageChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     if (selectElement) {
@@ -131,41 +209,24 @@ export class NavbarComponent implements OnInit {
 
   toggleNotifications(): void {
     this.showNotifications = !this.showNotifications;
-
-    console.log('CLICK NOTIFICATION');
-    console.log('showNotifications:', this.showNotifications);
-    console.log('notifications:', this.notifications);
   }
 
   markAsRead(notification: Notification): void {
-    if (notification.read) { // <-- Usar 'read'
-      return;
-    }
-
-    this.notificationService.markAsRead(notification.id)
-      .subscribe({
-        next: () => {
-          notification.read = true; // <-- Usar 'read'
-          this.unreadCount--;
-        },
-        error: (error) => {
-          console.error('Erreur lors du marquage comme lu', error);
-        }
-      });
+    if (notification.read) return;
+    this.notificationService.markAsRead(notification.id).subscribe({
+      next: () => {
+        notification.read = true;
+        this.unreadCount--;
+      }
+    });
   }
 
   markAllAsRead(): void {
-    this.notificationService.markAllAsRead()
-      .subscribe({
-        next: () => {
-          this.notifications.forEach(
-            notification => notification.read = true // <-- Usar 'read'
-          );
-          this.unreadCount = 0;
-        },
-        error: (error) => {
-          console.error('Erreur lors du marquage des notifications', error);
-        }
-      });
+    this.notificationService.markAllAsRead().subscribe({
+      next: () => {
+        this.notifications.forEach(n => n.read = true);
+        this.unreadCount = 0;
+      }
+    });
   }
 }

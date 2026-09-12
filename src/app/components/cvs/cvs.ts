@@ -4,8 +4,6 @@ import { Router } from '@angular/router';
 import { Cv } from '../../models/cv';
 import { CvService } from '../../services/cv';
 import { TranslatePipe } from '@ngx-translate/core';
-
-// ── NOUVEAU : imports pour le transcript ──
 import { TranscriptService, TranscriptEntry } from '../../services/transcript';
 import { TranscriptViewComponent } from '../transcript/transcript';
 
@@ -19,29 +17,25 @@ interface CandidateGroup {
 @Component({
   selector: 'app-cvs',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, TranscriptViewComponent], // ← ajouté
+  imports: [CommonModule, TranslatePipe, TranscriptViewComponent],
   templateUrl: './cvs.html',
   styleUrls: ['./cvs.scss']
 })
 export class CVs implements OnInit {
   private cvService = inject(CvService);
   private router = inject(Router);
-
-  // ── NOUVEAU : service transcript ──
   private transcriptService = inject(TranscriptService);
 
   cvs = signal<Cv[]>([]);
   isLoading = signal(true);
   selectedCvDetail = signal<Cv | null>(null);
 
-  // ── NOUVEAU : état transcript + score pour la modale ──
   selectedTranscript = signal<TranscriptEntry[]>([]);
   transcriptLoading = signal<boolean>(false);
   interviewScore = signal<number | null>(null);
 
-  // Parámetros de paginación (por ejemplo, 3 grupos de candidatos por página)
   currentPage = signal<number>(1);
-  pageSize = 3;
+  pageSize = 5; // Ajustado para tabla profesional
 
   groupedCvs = computed<CandidateGroup[]>(() => {
     const map = new Map<number, CandidateGroup>();
@@ -74,7 +68,6 @@ export class CVs implements OnInit {
     return Array.from(map.values());
   });
 
-  // Calcul dynamique des pages totales pour les groupes
   totalPages = computed(() => {
     return Math.ceil(this.groupedCvs().length / this.pageSize) || 1;
   });
@@ -84,7 +77,6 @@ export class CVs implements OnInit {
     return Array.from({ length: total }, (_, i) => i + 1);
   });
 
-  // Extraction uniquement des groupes de la page active
   paginatedGroupedCvs = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize;
     const end = start + this.pageSize;
@@ -118,10 +110,9 @@ export class CVs implements OnInit {
   }
 
   navigateToUpload(): void {
-    this.router.navigate(['/cvs/nouveau']); // Route vers le composant d'upload
+    this.router.navigate(['/cvs/nouveau']);
   }
 
-  // ── MODIFIÉ : on charge le transcript + le score en ouvrant la modale ──
   openDetailModal(cv: Cv): void {
     this.selectedCvDetail.set(cv);
 
@@ -144,14 +135,12 @@ export class CVs implements OnInit {
       }
     });
 
-    // ── NOUVEAU : récupère aussi le score d'entretien ──
     this.transcriptService.getScore(candidatId).subscribe({
       next: (res) => this.interviewScore.set(res.interviewScore ?? null),
       error: () => this.interviewScore.set(null)
     });
   }
 
-  // ── MODIFIÉ : on nettoie le transcript et le score en fermant ──
   closeDetailModal(): void {
     this.selectedCvDetail.set(null);
     this.selectedTranscript.set([]);
@@ -168,7 +157,6 @@ export class CVs implements OnInit {
     return `http://localhost:8080${cv.fichierUrl}`;
   }
 
-  // ── NOUVEAU : couleur du badge selon le score ──
   getScoreClass(score: number | null): string {
     if (score === null) return 'score-none';
     if (score >= 70) return 'score-good';
@@ -184,13 +172,5 @@ export class CVs implements OnInit {
         this.currentPage.update(p => p - 1);
       }
     });
-  }
-
-  // 🚀 FONCTION AJOUTÉE POUR CORRIGER L'ERREUR DU BOUTON HTML
-  irAEntrevista(cv: Cv): void {
-    const candidatId = cv.candidat?.id ?? (cv as any).candidatId;
-    const poste = cv.titre ?? '';
-    const url = `http://localhost:4201/start?candidatId=${candidatId}&poste=${encodeURIComponent(poste)}`;
-    window.location.href = url;
   }
 }

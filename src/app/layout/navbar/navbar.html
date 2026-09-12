@@ -12,32 +12,30 @@
       <option value="ar">🇲🇦 AR</option>
     </select>
 
+    <!-- 📅 Planning : Ouvre le modal sur la même page -->
+    <button class="action-btn" (click)="togglePlanningModal()" [title]="'nav.planning' | translate">
+      📅 <span class="d-none d-md-inline">{{ 'nav.planning' | translate }}</span>
+    </button>
+
     <!-- Bouton Thème interactif -->
     <button class="action-btn" (click)="toggleTheme()" title="Basculer le thème">
       {{ isDarkTheme ? '☀️ ' + ('nav.clear' | translate) : '🌙 ' + ('nav.theme' | translate) }}
     </button>
 
     <div class="notification-container">
-
       <button class="action-btn has-badge" title="Notifications" (click)="toggleNotifications()">
-
         {{ 'nav.alerts' | translate }}
-
         @if (unreadCount > 0) {
         <span class="badge-count">
           {{ unreadCount }}
         </span>
         }
-
       </button>
 
       @if (showNotifications) {
-
       <div class="notification-dropdown">
-
         <div class="notification-header">
           <strong>Notifications</strong>
-
           @if (unreadCount > 0) {
           <button (click)="markAllAsRead()" class="mark-all-btn">
             Tout lire
@@ -46,13 +44,10 @@
         </div>
 
         @if (notifications.length === 0) {
-
         <div class="empty-notifications">
           Aucune notification
         </div>
-
         } @else {
-
         @for (notification of notifications; track notification.id) {
         <div class="notification-item" [class.unread]="!notification.read" (click)="markAsRead(notification)">
           <div class="notification-icon">🔔</div>
@@ -62,19 +57,14 @@
           </div>
         </div>
         }
-
         }
-
       </div>
-
       }
-
     </div>
 
     <div class="divider"></div>
 
     <div class="user-profile">
-      <!-- Avatar dynamique généré à partir des initiales -->
       <div class="avatar">{{ userInitials }}</div>
       <div class="user-info">
         <span class="user-name">{{ userName }}</span>
@@ -83,3 +73,71 @@
     </div>
   </div>
 </header>
+
+<!-- 🌟 MODAL INTÉGRÉ SUR LA MÊME PAGE : Sélection de candidat & Offres directes -->
+@if (showPlanningModal) {
+<div class="planning-modal-backdrop" (click)="togglePlanningModal()">
+  <div class="planning-modal-card" (click)="$event.stopPropagation()">
+
+    <!-- En-tête du Modal -->
+    <div class="modal-header-box">
+      <div class="header-titles">
+        <h2>📅 Planification Intelligente des Entretiens</h2>
+        <p>Sélectionnez un candidat pour obtenir instantanément ses offres correspondantes.</p>
+      </div>
+      <button class="close-modal-btn" (click)="togglePlanningModal()">✕</button>
+    </div>
+
+    <!-- Formulaire de Sélection Simple -->
+    <div class="selection-form-group">
+      <label for="candidateSelect">🎯 Choisir un Candidat :</label>
+      <select id="candidateSelect" class="styled-select" [(ngModel)]="selectedCandidateId"
+        (change)="onCandidateSelect()">
+        <option [value]="null" disabled>-- Sélectionnez un profil candidat --</option>
+        @for (candidate of candidatesList; track candidate.id) {
+        <option [value]="candidate.id">
+          {{ candidate.nom }} {{ candidate.prenom }} — [ Email : {{ candidate.email }} ]
+        </option>
+        }
+      </select>
+    </div>
+
+    <!-- Section des Offres Directes -->
+    @if (selectedCandidateId) {
+    <div class="matching-offers-container">
+      <h3>💡 Offres recommandées pour ce profil</h3>
+
+      @if (isLoadingMatching) {
+      <div class="modal-loading">
+        <div class="spinner"></div>
+        <span>Recherche des meilleures offres en cours...</span>
+      </div>
+      } @else if (matchedOffers.length > 0) {
+      <div class="offers-grid">
+        @for (match of matchedOffers; track match.offreId) {
+        <div class="offer-item-card">
+          <div class="match-score-badge">{{ match.score }}% Match</div>
+          <h4>{{ match.titreOffre }}</h4>
+          <span class="dept-tag">📍 {{ match.departement }}</span>
+          <p class="match-reason">{{ match.raison }}</p>
+
+          <div class="schedule-action-box">
+            <input type="datetime-local" class="styled-datetime" [(ngModel)]="match.interviewDate">
+            <button class="btn-schedule" (click)="scheduleInterview(match)">
+              ✉️ Planifier & Envoyer
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      } @else {
+      <div class="empty-offers">
+        <p>Aucune offre correspondante trouvée pour ce candidat.</p>
+      </div>
+      }
+    </div>
+    }
+
+  </div>
+</div>
+}
