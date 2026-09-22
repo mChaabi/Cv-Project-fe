@@ -1,0 +1,110 @@
+.interview-list-container {
+  padding: 24px;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 { margin: 0; font-size: 1.5rem; }
+  .subtitle { color: #64748B; margin: 4px 0 0; font-size: 0.9rem; }
+}
+
+.filter-box select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.interview-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #FFF;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+
+  th, td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #EDF1F5;
+  }
+
+  th {
+    background: #F8FAFC;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #64748B;
+  }
+
+  .row-main {
+    cursor: pointer;
+    transition: background 0.15s;
+    &:hover { background: #F8FAFC; }
+  }
+
+  .email-sub {
+    font-size: 0.8rem;
+    color: #94A3B8;
+  }
+
+  .expand-icon {
+    text-align: center;
+    color: #94A3B8;
+  }
+}
+
+.score-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.score-good   { background: #DCFCE7; color: #15803D; }
+.score-medium { background: #FEF9C3; color: #A16207; }
+.score-bad    { background: #FEE2E2; color: #B91C1C; }
+.score-none   { background: #F1F5F9; color: #64748B; }
+
+.status-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.status-completed    { background: #DCFCE7; color: #15803D; }
+.status-disqualified { background: #FEE2E2; color: #B91C1C; }
+
+.row-detail td {
+  background: #FAFBFC;
+}
+
+.detail-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 16px 8px;
+
+  h4 { margin: 0 0 8px; font-size: 0.9rem; color: #1B1F27; }
+  p, li { font-size: 0.85rem; color: #3B4451; }
+}
+
+.transcript-box {
+  max-height: 240px;
+  overflow-y: auto;
+  background: #FFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 10px;
+
+  p { margin: 6px 0; font-size: 0.82rem; }
+  .ai-line { color: #6B2737; }
+  .candidat-line { color: #1B1F27; }
+}
+
+.loading-state, .empty-state, .error-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748B;
+}

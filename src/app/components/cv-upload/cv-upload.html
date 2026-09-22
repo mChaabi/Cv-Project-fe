@@ -7,83 +7,171 @@
     <button class="btn-secondary" (click)="goBack()">{{ 'CV_UPLOAD.BACK_BTN' | translate }}</button>
   </header>
 
-  <!-- Étape 1 : Formulaire d'upload si aucune prévisualisation n'est active -->
-  @if (!extractedPreviewData()) {
-    <div class="upload-page-card">
-      <div class="upload-body">
-        <label>{{ 'CV_UPLOAD.CANDIDATE_LABEL' | translate }}</label>
-        <select [(ngModel)]="selectedCandidatId">
-          <option [ngValue]="null">{{ 'CV_UPLOAD.SELECT_PROFILE' | translate }}</option>
-          @for (c of candidats(); track c.id) {
-            <option [ngValue]="c.id">{{ c.nom }} {{ c.prenom }}</option>
-          }
-        </select>
-
-        <label>{{ 'CV_UPLOAD.FILE_LABEL' | translate }}</label>
-        <label class="file-picker">
-          <input type="file" id="cv-file-input"
-            accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
-            (change)="onFileSelected($event)" hidden />
-          <div class="file-picker-content">
-            <span class="file-icon"></span>
-            <span class="file-picker-text">
-              {{ selectedFile ? selectedFile.name : ('CV_UPLOAD.CHOOSE_FILE' | translate) }}
-            </span>
-            <span class="file-picker-hint">{{ 'CV_UPLOAD.FILE_HINT' | translate }}</span>
-          </div>
-        </label>
-
-        @if (isAnalyzing()) {
-          <div class="analyzing-state">
-            <div class="spinner"></div>
-            <p>{{ 'CV_UPLOAD.ANALYZING_TEXT' | translate }}</p>
-          </div>
+  <!-- Étape 1 : Upload -->
+  @if (!showEditForm()) {
+  <div class="upload-page-card">
+    <div class="upload-body">
+      <label>{{ 'CV_UPLOAD.CANDIDATE_LABEL' | translate }}</label>
+      <select [(ngModel)]="selectedCandidatId">
+        <option [ngValue]="null">{{ 'CV_UPLOAD.SELECT_PROFILE' | translate }}</option>
+        @for (c of candidats(); track c.id) {
+        <option [ngValue]="c.id">{{ c.nom }} {{ c.prenom }}</option>
         }
-      </div>
+      </select>
 
-      <div class="modal-footer" style="border-radius: 0 0 12px 12px;">
-        <button class="btn-secondary" (click)="goBack()">{{ 'CV_UPLOAD.CANCEL' | translate }}</button>
-        <button class="btn-primary" [disabled]="!selectedFile || !selectedCandidatId || isAnalyzing()"
-          (click)="uploadAndAnalyze()">
-          {{ isAnalyzing() ? ('CV_UPLOAD.ANALYZING_BTN' | translate) : ('CV_UPLOAD.ANALYZE_BTN' | translate) }}
-        </button>
+      <label>{{ 'CV_UPLOAD.FILE_LABEL' | translate }}</label>
+      <label class="file-picker">
+        <input type="file" id="cv-file-input"
+          accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+          (change)="onFileSelected($event)" hidden />
+        <div class="file-picker-content">
+          <span class="file-icon"></span>
+          <span class="file-picker-text">
+            {{ selectedFile ? selectedFile.name : ('CV_UPLOAD.CHOOSE_FILE' | translate) }}
+          </span>
+          <span class="file-picker-hint">{{ 'CV_UPLOAD.FILE_HINT' | translate }}</span>
+        </div>
+      </label>
+
+      @if (isAnalyzing()) {
+      <div class="analyzing-state">
+        <div class="spinner"></div>
+        <p>{{ 'CV_UPLOAD.ANALYZING_TEXT' | translate }}</p>
       </div>
+      }
     </div>
+
+    <div class="modal-footer" style="border-radius: 0 0 12px 12px;">
+      <button class="btn-secondary" (click)="goBack()">{{ 'CV_UPLOAD.CANCEL' | translate }}</button>
+      <button class="btn-primary" [disabled]="!selectedFile || !selectedCandidatId || isAnalyzing()"
+        (click)="uploadAndAnalyze()">
+        {{ isAnalyzing() ? ('CV_UPLOAD.ANALYZING_BTN' | translate) : ('CV_UPLOAD.ANALYZE_BTN' | translate) }}
+      </button>
+    </div>
+  </div>
   }
 
-  <!-- Étape 2 : Prévisualisation des données extraites par l'IA -->
-  @if (extractedPreviewData()) {
-    <div class="preview-container">
-      <h3 class="preview-title">{{ 'CV_PREVIEW.TITLE' | translate }}</h3>
+  <!-- Étape 2 : Formulaire éditable, pré-rempli par l'IA -->
+  @if (showEditForm()) {
+  <div class="preview-container">
+    <h3 class="preview-title">{{ 'CV_PREVIEW.TITLE' | translate }}</h3>
+    <p class="subtitle">Vérifiez et corrigez les données extraites avant l'enregistrement.</p>
 
-      <div class="preview-card">
+    <form class="edit-form" (ngSubmit)="saveCv()">
+
+      <!-- Infos candidat -->
+      <div class="form-section">
         <h4>{{ 'CV_PREVIEW.CANDIDATE_INFO' | translate }}</h4>
-        <p><strong>{{ 'CV_PREVIEW.NAME' | translate }} :</strong> {{ extractedPreviewData().extracted.candidat?.prenom }} {{ extractedPreviewData().extracted.candidat?.nom }}</p>
-        <p><strong>{{ 'CV_PREVIEW.EMAIL' | translate }} :</strong> {{ extractedPreviewData().extracted.candidat?.email }}</p>
-        <p><strong>{{ 'CV_PREVIEW.PHONE' | translate }} :</strong> {{ extractedPreviewData().extracted.candidat?.telephone }}</p>
-        <p><strong>{{ 'CV_PREVIEW.TARGET_JOB' | translate }} :</strong> {{ extractedPreviewData().extracted.candidat?.titrePoste }}</p>
-
-        <h4 style="margin-top: 1.5rem;">{{ 'CV_PREVIEW.DETECTED_SKILLS' | translate }}</h4>
-        <div class="competence-tags" style="margin-top: 0.5rem;">
-          @for (comp of extractedPreviewData().extracted.competences; track comp) {
-            <span class="tag">{{ comp }}</span>
-          }
-        </div>
-
-        <h4 style="margin-top: 1.5rem;">{{ 'CV_PREVIEW.EXPERIENCES' | translate }}</h4>
-        @for (exp of extractedPreviewData().extracted.experiences; track exp.poste) {
-          <div class="sub-item">
-            <strong>{{ exp.poste }}</strong> {{ 'CV_PREVIEW.AT' | translate }} <em style="color: var(--accent);">{{ exp.entreprise }}</em>
-            <span style="font-size: 0.85rem; color: var(--gray);">({{ exp.dateDebut }} - {{ exp.dateFin }})</span>
-            <p style="margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--gray);">{{ exp.description }}</p>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Titre / Poste recherché</label>
+            <input type="text" [(ngModel)]="formData.titrePoste" name="titrePoste" />
           </div>
-        }
+          <div class="form-field">
+            <label>{{ 'CV_PREVIEW.NAME' | translate }} (prénom)</label>
+            <input type="text" [(ngModel)]="formData.prenom" name="prenom" />
+          </div>
+          <div class="form-field">
+            <label>{{ 'CV_PREVIEW.NAME' | translate }} (nom)</label>
+            <input type="text" [(ngModel)]="formData.nom" name="nom" />
+          </div>
+          <div class="form-field">
+            <label>{{ 'CV_PREVIEW.EMAIL' | translate }}</label>
+            <input type="email" [(ngModel)]="formData.email" name="email" />
+          </div>
+          <div class="form-field">
+            <label>{{ 'CV_PREVIEW.PHONE' | translate }}</label>
+            <input type="text" [(ngModel)]="formData.telephone" name="telephone" />
+          </div>
+          <div class="form-field">
+            <label>LinkedIn</label>
+            <input type="text" [(ngModel)]="formData.linkedinUrl" name="linkedinUrl" />
+          </div>
+        </div>
       </div>
 
-      <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-        <button class="btn-primary" (click)="confirmAndSaveCv()">{{ 'CV_PREVIEW.CONFIRM_BTN' | translate }}</button>
-        <button class="btn-secondary" (click)="extractedPreviewData.set(null)">{{ 'CV_PREVIEW.RESTART_BTN' | translate }}</button>
+      <!-- Compétences (chips editables) -->
+      <div class="form-section">
+        <h4>{{ 'CV_PREVIEW.DETECTED_SKILLS' | translate }}</h4>
+        <div class="chips-input">
+          <div class="chips-list">
+            @for (comp of competences; track comp; let i = $index) {
+            <span class="tag chip">
+              {{ comp }}
+              <button type="button" class="chip-remove" (click)="removeCompetence(i)">×</button>
+            </span>
+            }
+          </div>
+          <div class="chip-add-row">
+            <input type="text" [(ngModel)]="newCompetence" name="newCompetence"
+              placeholder="Ajouter une compétence..." (keyup.enter)="addCompetence()" />
+            <button type="button" class="btn-secondary" (click)="addCompetence()">+ Ajouter</button>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <!-- Expériences (lista editable) -->
+      <div class="form-section">
+        <h4>{{ 'CV_PREVIEW.EXPERIENCES' | translate }}</h4>
+        @for (exp of experiences; track $index; let i = $index) {
+        <div class="sub-item-editable">
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Poste</label>
+              <input type="text" [(ngModel)]="exp.poste" [name]="'expPoste' + i" />
+            </div>
+            <div class="form-field">
+              <label>Entreprise</label>
+              <input type="text" [(ngModel)]="exp.entreprise" [name]="'expEntreprise' + i" />
+            </div>
+            <div class="form-field">
+              <label>Date début</label>
+              <input type="date" [(ngModel)]="exp.dateDebut" [name]="'expDateDebut' + i" />
+            </div>
+            <div class="form-field">
+              <label>Date fin</label>
+              <input type="date" [(ngModel)]="exp.dateFin" [name]="'expDateFin' + i" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Description</label>
+            <textarea [(ngModel)]="exp.description" [name]="'expDesc' + i" rows="2"></textarea>
+          </div>
+          <button type="button" class="btn-action-icon delete" (click)="removeExperience(i)">🗑️ Supprimer</button>
+        </div>
+        }
+        <button type="button" class="btn-secondary" (click)="addExperience()">+ Ajouter une expérience</button>
+      </div>
+
+      <!-- Formations (lista editable) -->
+      <div class="form-section">
+        <h4>{{ 'CV_MODAL.FORMATIONS' | translate }}</h4>
+        @for (form of formations; track $index; let i = $index) {
+        <div class="sub-item-editable">
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Diplôme</label>
+              <input type="text" [(ngModel)]="form.diplome" [name]="'formDiplome' + i" />
+            </div>
+            <div class="form-field">
+              <label>Établissement</label>
+              <input type="text" [(ngModel)]="form.etablissement" [name]="'formEtablissement' + i" />
+            </div>
+          </div>
+          <button type="button" class="btn-action-icon delete" (click)="removeFormation(i)">🗑️ Supprimer</button>
+        </div>
+        }
+        <button type="button" class="btn-secondary" (click)="addFormation()">+ Ajouter une formation</button>
+      </div>
+
+      <div class="form-footer-actions">
+        <button type="button" class="btn-secondary" (click)="cancelEdit()">{{ 'CV_PREVIEW.RESTART_BTN' | translate }}</button>
+        <button type="submit" class="btn-primary" [disabled]="isSaving()">
+          {{ isSaving() ? 'Enregistrement...' : ('CV_PREVIEW.CONFIRM_BTN' | translate) }}
+        </button>
+      </div>
+
+    </form>
+  </div>
   }
 </div>

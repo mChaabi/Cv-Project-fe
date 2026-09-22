@@ -63,7 +63,13 @@
     <!-- Accessible à tous ou adapté selon le rôle -->
     <a routerLink="/cvs" routerLinkActive="active" class="menu-item">
       <span class="menu-icon">📁</span>
-      <span class="label">{{ userRole === 'CANDIDAT' ? ('sidebar.uploadCv' | translate) : ('sidebar.cvProfiles' | translate) }}</span>
+      <span class="label">{{ userRole === 'CANDIDAT' ? ('sidebar.uploadCv' | translate) : ('sidebar.cvProfiles' |
+        translate) }}</span>
+    </a>
+
+    <a routerLink="/entretiens" routerLinkActive="active" class="menu-item">
+      <span class="menu-icon">📋</span>
+      <span class="label">{{ 'sidebar.interviewsList' | translate }}</span>
     </a>
 
     @if (userRole === 'ADMIN' || userRole === 'RH') {

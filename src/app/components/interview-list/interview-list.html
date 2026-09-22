@@ -1,0 +1,120 @@
+<div class="interview-list-container">
+
+    <div class="action-bar">
+        <div>
+            <h1>{{ 'interviews.title' | translate }}</h1>
+            <p class="subtitle">{{ 'interviews.subtitle' | translate }}</p>
+        </div>
+
+        <div class="filter-box">
+            <select (change)="onFilterChange($event)">
+                <option value="ALL">{{ 'interviews.filterAll' | translate }}</option>
+                <option value="completed">{{ 'interviews.filterCompleted' | translate }}</option>
+                <option value="disqualified">{{ 'interviews.filterDisqualified' | translate }}</option>
+            </select>
+        </div>
+    </div>
+
+    @if (isLoading()) {
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>{{ 'interviews.loading' | translate }}</p>
+    </div>
+    } @else if (errorMsg()) {
+    <div class="error-state">
+        <p>⚠️ {{ errorMsg() }}</p>
+        <button (click)="loadData()">{{ 'interviews.retry' | translate }}</button>
+    </div>
+    } @else if (filteredRows().length === 0) {
+    <div class="empty-state">
+        <p>{{ 'interviews.empty' | translate }}</p>
+    </div>
+    } @else {
+    <table class="interview-table">
+        <thead>
+            <tr>
+                <th>{{ 'interviews.candidate' | translate }}</th>
+                <th>{{ 'interviews.position' | translate }}</th>
+                <th>{{ 'interviews.date' | translate }}</th>
+                <th>{{ 'interviews.interviewScore' | translate }}</th>
+                <th>{{ 'interviews.presenceScore' | translate }}</th>
+                <th>{{ 'interviews.status' | translate }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (row of filteredRows(); track row.candidatId) {
+            <tr class="row-main" (click)="toggleDetail(row.candidatId)">
+                <td>
+                    <strong>{{ row.candidateName }}</strong>
+                    <div class="email-sub">{{ row.candidateEmail }}</div>
+                </td>
+                <td>{{ row.poste }}</td>
+                <td>{{ row.dateEntretien | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                    <span class="score-badge" [ngClass]="scoreClass(row.interviewScore)">
+                        {{ row.interviewScore !== null ? row.interviewScore + '/100' : '—' }}
+                    </span>
+                </td>
+                <td>
+                    <span class="score-badge" [ngClass]="scoreClass(row.presenceScore)">
+                        {{ row.presenceScore }}/100
+                    </span>
+                </td>
+                <td>
+                    <span class="status-badge" [class.status-completed]="row.status === 'completed'"
+                        [class.status-disqualified]="row.status === 'disqualified'">
+                        {{ row.status === 'completed' ? ('interviews.statusCompleted' | translate) :
+                        ('interviews.statusDisqualified' | translate) }}
+                    </span>
+                </td>
+                <td class="expand-icon">{{ isExpanded(row.candidatId) ? '▲' : '▼' }}</td>
+            </tr>
+
+            @if (isExpanded(row.candidatId)) {
+            <tr class="row-detail">
+                <td colspan="7">
+                    <div class="detail-panel">
+
+                        <div class="detail-block">
+                            <h4>{{ 'interviews.feedbackTitle' | translate }}</h4>
+                            <p>{{ row.feedback || ('interviews.noFeedback' | translate) }}</p>
+                        </div>
+
+                        <div class="detail-block">
+                            <h4>{{ 'interviews.surveillanceTitle' | translate }}</h4>
+                            <ul>
+                                <li>👁️ {{ 'interviews.lookAways' | translate }} : <strong>{{ row.totalLookAways
+                                        }}</strong></li>
+                                <li>⏱️ {{ 'interviews.lookAwayDuration' | translate }} : <strong>{{
+                                        row.totalLookAwayDuration }}s</strong></li>
+                                <li>🔇 {{ 'interviews.micPaused' | translate }} : <strong>{{ row.micPausedCount }} {{
+                                        'interviews.times' | translate }}</strong></li>
+                            </ul>
+                        </div>
+
+                        @if (row.transcript && row.transcript.length > 0) {
+                        <div class="detail-block">
+                            <h4>{{ 'interviews.transcriptTitle' | translate }}</h4>
+                            <div class="transcript-box">
+                                @for (entry of row.transcript; track entry.timestamp) {
+                                <p [class.ai-line]="entry.role === 'ai'"
+                                    [class.candidat-line]="entry.role === 'candidat'">
+                                    <strong>{{ (entry.role === 'ai' ? 'interviews.roleAi' : 'interviews.roleCandidat') |
+                                        translate }} :</strong> {{ entry.text }}
+                                </p>
+                                }
+                            </div>
+                        </div>
+                        }
+
+                    </div>
+                </td>
+            </tr>
+            }
+            }
+        </tbody>
+    </table>
+    }
+
+</div>

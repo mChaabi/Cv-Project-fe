@@ -8,4 +8,5 @@ export interface Candidat {
   linkedinUrl: string;
   dateNaissance: string; // format ISO "YYYY-MM-DD"
   addedDate?: string;
+  poste:string;
 }

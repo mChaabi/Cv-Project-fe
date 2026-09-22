@@ -258,4 +258,60 @@
   &:hover { background: var(--gray-light); }
 }
 
+.edit-form {
+  .form-section {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E2E8F0;
+
+    h4 { margin: 0 0 12px; font-size: 0.95rem; }
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+
+    label { font-size: 0.8rem; color: #64748B; font-weight: 600; }
+    input, textarea {
+      padding: 8px 10px;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+  }
+
+  .chips-input {
+    .chips-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .chip-remove {
+      background: none; border: none; cursor: pointer; font-weight: 700;
+      color: inherit; line-height: 1;
+    }
+    .chip-add-row { display: flex; gap: 8px; }
+  }
+
+  .sub-item-editable {
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .form-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+  }
+}
 @keyframes spin { to { transform: rotate(360deg); } }

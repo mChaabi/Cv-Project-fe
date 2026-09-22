@@ -50,16 +50,20 @@ export class OffresEmploiComponent implements OnInit {
     return this.offres().slice(start, end);
   });
 
-  toggleMatching(offreId: number): void {
-    // Inverse l'état (ouvert/fermé)
-    const currentState = !!this.showMatchingMap[offreId];
-    this.showMatchingMap[offreId] = !currentState;
+  toggleMatching(offreId: number) {
+  this.loadingMatching[offreId] = true;
 
-    // Si on l'ouvre et que les données ne sont pas encore chargées, on les récupère
-    if (this.showMatchingMap[offreId] && !this.matchingData[offreId] && !this.loadingMatching[offreId]) {
-      this.loadMatchingCandidates(offreId);
+  this.offreService.getMatchingCandidates(offreId).subscribe({
+    next: (data) => {
+      this.matchingData[offreId] = data;
+      this.loadingMatching[offreId] = false;
+    },
+    error: (error) => {
+      console.error('Erreur matching IA:', error);
+      this.loadingMatching[offreId] = false;
     }
-  }
+  });
+}
 
   loadMatchingCandidates(offreId: number): void {
     this.loadingMatching[offreId] = true;
@@ -75,27 +79,40 @@ export class OffresEmploiComponent implements OnInit {
     });
   }
 
-  // FONCTION CORRIGÉE POUR ENVOYER L'INVITATION
   sendInvitation(candidate: any, offre: any): void {
     if (!candidate.selectedDate) {
       alert("Veuillez sélectionner une date et une heure pour l'entretien !");
       return;
     }
+    const toEmail = candidate.email || candidate.emailCandidat;
+    if (!toEmail) {
+      alert("⚠️ Aucun email trouvé pour ce candidat. Vérifiez la correspondance en base de données.");
+      return;
+    }
+
+    let formattedDate = candidate.selectedDate;
+    if (formattedDate.length === 16) {
+      formattedDate += ':00';
+    }
 
     const payload = {
-      toEmail: candidate.email,
+      // Vérifiez ici si c'est candidate.email ou candidate.emailCandidat selon votre base de données
+      toEmail: candidate.email || candidate.emailCandidat,
       candidateName: candidate.nomCandidat || `${candidate.nom || ''} ${candidate.prenom || ''}`.trim(),
       jobTitle: offre.titre,
       scoreMatch: candidate.scoreMatch ? candidate.scoreMatch.toString() : '0',
-      interviewDate: candidate.selectedDate
+      interviewDate: formattedDate,
+      candidatId: candidate.id || candidate.candidatId // Transmission de l'ID pour le lien
     };
+
+    console.log("Payload corrigé envoyé au backend email :", payload);
 
     this.emailService.sendInterviewInvitation(payload).subscribe({
       next: () => {
         alert("✅ Invitation envoyée avec succès par e-mail généré par l'IA !");
       },
       error: (err) => {
-        console.error(err);
+        console.error("Erreur HTTP 500 détails :", err);
         alert("❌ Erreur lors de l'envoi de l'e-mail.");
       }
     });

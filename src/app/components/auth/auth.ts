@@ -1,21 +1,23 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UtilisateurService } from '../../services/utilisateur';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule ,TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './auth.html',
   styleUrls: ['./auth.scss']
 })
-export class AuthComponent {
+export class AuthComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private utilisateurService = inject(UtilisateurService);
+  private translate = inject(TranslateService);
+  private platformId = inject(PLATFORM_ID);
 
   // Signal pour basculer entre Login (true) et Register (false)
   isLoginMode = signal<boolean>(true);
@@ -30,6 +32,28 @@ export class AuthComponent {
     password: ['', [Validators.required, Validators.minLength(4)]],
     role: ['RH']    // Utilisé seulement pour l'inscription
   });
+
+  ngOnInit(): void {
+    // Registra los idiomas disponibles
+    this.translate.addLangs(['fr', 'en', 'ar']);
+
+    let defaultLang = 'fr'; // Idioma por defecto absoluto
+
+    // Solo intentar acceder a localStorage si estamos en el navegador
+    if (isPlatformBrowser(this.platformId)) {
+      const browserLang = this.translate.getBrowserLang();
+      const savedLang = localStorage.getItem('selectedLang');
+
+      if (savedLang && ['fr', 'en', 'ar'].includes(savedLang)) {
+        defaultLang = savedLang;
+      } else if (browserLang && ['fr', 'en', 'ar'].includes(browserLang)) {
+        defaultLang = browserLang;
+      }
+    }
+
+    // Aplica el idioma directamente con .use()
+    this.translate.use(defaultLang);
+  }
 
   // Méthode pour changer de mode (Connexion <-> Inscription)
   toggleMode(loginMode: boolean): void {
